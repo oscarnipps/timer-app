@@ -1,23 +1,22 @@
-package com.app.timerz.ui.home
+package com.app.timerz.ui.timerlist
 
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.NumberPicker
-import androidx.core.content.ContextCompat
 import androidx.databinding.DataBindingUtil
-import androidx.fragment.app.Fragment
-import androidx.fragment.app.viewModels
-import androidx.navigation.fragment.findNavController
+import androidx.navigation.fragment.navArgs
 import com.app.timerz.R
-import com.app.timerz.databinding.FragmentHomeBinding
+import com.app.timerz.data.local.database.entity.Timer
+import com.app.timerz.databinding.FragmentAddTimerBinding
+import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import timber.log.Timber
 
-class HomeFragment : Fragment() {
+class AddTimerFragment : BottomSheetDialogFragment() {
 
-    private lateinit var binding: FragmentHomeBinding
-    private val homeViewModel: HomeViewModel by viewModels()
+    private val args : AddTimerFragmentArgs by navArgs()
+    private lateinit var binding : FragmentAddTimerBinding
     private lateinit var hourPicker: NumberPicker
     private lateinit var minutePicker: NumberPicker
     private lateinit var secondsPicker: NumberPicker
@@ -27,14 +26,14 @@ class HomeFragment : Fragment() {
     private lateinit var hourPickerValues: Array<String>
     private lateinit var minutePickerValues: Array<String>
     private lateinit var secondPickerValues: Array<String>
-
-
+    private var timerItem : Timer? = null
+    
     companion object {
         private const val MAX_HOUR_VALUE = 100
         private const val MAX_MINUTE_VALUE = 59
         private const val MAX_SECOND_VALUE = 59
     }
-
+    
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         getPickerValues()
@@ -45,75 +44,34 @@ class HomeFragment : Fragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        binding = DataBindingUtil.inflate(inflater, R.layout.fragment_home, container, false)
-
-        binding.lifecycleOwner = viewLifecycleOwner
-
-        binding.viewModel = homeViewModel
-
-        hourPicker = binding.hourPicker
-
-        minutePicker = binding.minutePicker
-
-        secondsPicker = binding.secondsPicker
-
+        binding = DataBindingUtil.inflate(inflater, R.layout.fragment_add_timer, container, false)
         return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        setUpTimerValue()
+        timerItem = args.timerItem
 
-        setUpHourPicker()
-
-        setUpMinutePicker()
-
-        setUpSecondPicker()
-
-        binding.startTimerButton.setOnClickListener {
-            //homeViewModel.setTimerValue(getTimerDuration())
-
-            val action =
-                HomeFragmentDirections.actionHomeFragmentToActiveTimerFragment(getTimerDuration())
-
-            findNavController().navigate(action)
+        if (timerItem != null) {
+            setUpTimerValue()
         }
 
-        homeViewModel.isTimerValueValid().observe(viewLifecycleOwner, { isTimerValueValid ->
-            Timber.d("timer value valid : $isTimerValueValid")
-
-            if (isTimerValueValid == false) {
-                updateButtonBackground(R.color.color_button_disabled)
-                return@observe
-            }
-
-            updateButtonBackground(R.color.color_button_enabled)
-        })
     }
 
     private fun setUpTimerValue() {
-        val previouslySetTimerValue = homeViewModel.getPreviouslySetTimerValue()
 
-        if (previouslySetTimerValue.isEmpty()) {
-            return
-        }
-
-        val hourMinuteSecond = previouslySetTimerValue.split(":")
+        val hourMinuteSecond = timerItem!!.timerValue.split(":")
 
         hourDuration = hourMinuteSecond[0]
 
         minuteDuration = hourMinuteSecond[1]
 
         secondDuration = hourMinuteSecond[2]
+
+        binding.timerTitle.setText(timerItem!!.title)
     }
-
-
-    private fun updateButtonBackground(backgroundColor: Int) {
-        binding.startTimerButton.backgroundTintList =
-            ContextCompat.getColorStateList(requireActivity(), backgroundColor)
-    }
-
+    
     private fun getPickerValues() {
         hourPickerValues = getHourPickerValues(MAX_HOUR_VALUE).toTypedArray()
 
@@ -137,7 +95,7 @@ class HomeFragment : Fragment() {
 
                 Timber.d("second selected $secondDuration")
 
-                homeViewModel.validateTimerValue(getTimerDuration())
+                
             }
         }
     }
@@ -157,7 +115,7 @@ class HomeFragment : Fragment() {
 
                 Timber.d("minute selected $minuteDuration")
 
-                homeViewModel.validateTimerValue(getTimerDuration())
+                
             }
         }
     }
@@ -178,7 +136,7 @@ class HomeFragment : Fragment() {
 
                 Timber.d("hour selected $hourDuration")
 
-                homeViewModel.validateTimerValue(getTimerDuration())
+                
             }
         }
     }
@@ -204,4 +162,5 @@ class HomeFragment : Fragment() {
 
         return values
     }
+
 }

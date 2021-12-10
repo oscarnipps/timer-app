@@ -23,6 +23,9 @@
         <action
             android:id="@+id/action_timerListFragment_to_activeTimerFragment"
             app:destination="@id/activeTimerFragment" />
+        <action
+            android:id="@+id/action_timerListFragment_to_addTimerFragment"
+            app:destination="@id/addTimerFragment" />
     </fragment>
 
     <fragment
@@ -40,5 +43,17 @@
             android:name="timerDuration"
             app:argType="string" />
     </fragment>
+
+    <dialog
+        android:id="@+id/addTimerFragment"
+        android:name="com.app.timerz.ui.timerlist.AddTimerFragment"
+        android:label="AddTimerFragment"
+        tools:layout="@layout/fragment_add_timer"
+        >
+        <argument
+            android:name="timerItem"
+            app:argType="com.app.timerz.data.local.database.entity.Timer"
+            app:nullable="true" />
+    </dialog>
 
 </navigation>
