@@ -42,6 +42,10 @@
         <argument
             android:name="timerDuration"
             app:argType="string" />
+
+        <argument
+            android:name="timerTitle"
+            app:argType="string" />
     </fragment>
 
     <dialog

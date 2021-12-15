@@ -8,5 +8,8 @@
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
     <color name="color_button_disabled">#FADCD9D9</color>
+    <color name="timer_paused_color">#CA2D21</color>
+    <color name="timer_resumed_color">#3B84BD</color>
     <color name="color_button_enabled">#FF6200EE</color>
+    <color name="button_default">#FF6200EE</color>
 </resources>

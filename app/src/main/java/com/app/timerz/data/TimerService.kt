@@ -9,66 +9,120 @@ import android.os.IBinder
 import androidx.lifecycle.MutableLiveData
 import com.app.timerz.util.NotificationUtil
 import timber.log.Timber
-import android.app.NotificationManager
-import android.content.Context
+import com.app.timerz.util.TimerUtil
 
 
 class TimerService : Service() {
 
     private val binder = TimerServiceBinder()
-    private val CHANNEL_ID = "channel1"
-    private lateinit var countDownTimer: CountDownTimer
+    private var countDownTimer: CountDownTimer? = null
+    private var timerMilliSecondsRemaining: Long? = null
+    private var timerTitle: String? = null
+    private var timerValue: String? = null
     private lateinit var notification: Notification
     val timerValueLiveData: MutableLiveData<String> = MutableLiveData()
 
-    override fun onCreate() {
-        super.onCreate()
-        showTimerNotification("00:23:45")
-    }
-
-    private fun showTimerNotification(value : String) {
-        notification = NotificationUtil.showNotification(this, value)
-        startForeground(1, notification)
-    }
+    //var isTimerRunning = false
+    var isTimerPaused = false
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
-        return super.onStartCommand(intent, flags, startId)
+        Timber.d("onStartCommand called")
+
+        handleIntentAction(intent)
+
+        return START_STICKY
+    }
+
+    private fun handleIntentAction(intent: Intent?) {
+        val action = intent?.action
+
+        Timber.d("intent action : $action")
+
+        when (action) {
+            Constants.ACTION_PAUSE_TIMER -> pauseTimer()
+
+            Constants.ACTION_RESUME_TIMER -> resumeTimer()
+
+            Constants.ACTION_CANCEL_TIMER -> cancelTimer()
+
+            else -> {
+                timerValue = intent?.extras?.getString("timer-value")
+
+                timerTitle = intent?.extras?.getString("timer-title")
+
+                Timber.d("timer value passed to service : $timerValue")
+
+                Timber.d("timer title passed to service : $timerTitle")
+
+                //showTimerNotification(timerValue!!, timerTitle!! , Constants.FLAG_PAUSE_TIMER)
+
+                setUpTimer(TimerUtil.getTimerValueInMilliseconds(timerValue!!))
+            }
+
+        }
+
     }
 
     override fun onBind(intent: Intent?): IBinder {
-        //get the data from the intent (time and flags)
-        val value = intent?.extras?.getString("timer-value")
+        //Timber.d("onBind called")
 
-        Timber.d("data passed to service : $value")
-
-        showTimerNotification(value!!)
-
-
-        countDownTimer = object : CountDownTimer(10000, 1000) {
-
-            override fun onTick(millisUntilFinished: Long) {
-                //format to to right string format
-
-                //update livedata
-                timerValueLiveData.value = millisUntilFinished.toString()
-                Timber.d("onTick : $millisUntilFinished")
-
-                updateNotification(millisUntilFinished.toString())
-
-                showTimerNotification( millisUntilFinished.toString())
-            }
-
-            override fun onFinish() {}
-        }.start()
-
+        //handleIntentAction(intent)
 
         return binder
     }
 
-    private fun updateNotification(value: String) {
-        val mNotificationManager =
-            getSystemService(NOTIFICATION_SERVICE) as NotificationManager
-        mNotificationManager.notify(1, NotificationUtil.showNotification(this, value))
+    private fun setUpTimer(timerDurationMilliSeconds: Long) {
+        Timber.d("timer paused : $isTimerPaused")
+
+        Timber.d("countdown timer : $countDownTimer")
+
+        showTimerNotification(timerValue!!, timerTitle!!, Constants.FLAG_RESUME_TIMER)
+
+        if (countDownTimer == null) {
+
+            countDownTimer = object : CountDownTimer(timerDurationMilliSeconds, 1000) {
+
+                override fun onTick(millisUntilFinished: Long) {
+                    val formattedValue = TimerUtil.getFormattedTime(millisUntilFinished)
+
+                    timerValueLiveData.value = formattedValue
+
+                    timerMilliSecondsRemaining = millisUntilFinished
+
+                    Timber.d("onTick : $formattedValue")
+
+                    NotificationUtil.updateNotification(
+                        this@TimerService,
+                        formattedValue,
+                        timerTitle!!,
+                        Constants.FLAG_PAUSE_TIMER
+                    )
+                }
+
+                override fun onFinish() {
+                    countDownTimer = null
+                    isTimerPaused = false
+                }
+            }
+
+            if (isTimerPaused) {
+                //showTimerNotification(timerValue!!, timerTitle!! , Constants.FLAG_RESUME_TIMER)
+                //resumeTimer()
+                return
+            }
+        }
+        countDownTimer?.start()
+    }
+
+    private fun showTimerNotification(timerValue: String, title: String, flag: String) {
+        notification = NotificationUtil.getNotification(
+            this,
+            timerValue,
+            title,
+            flag
+        )
+
+        startForeground(1, notification)
     }
 
     override fun onUnbind(intent: Intent?): Boolean {
@@ -77,12 +131,46 @@ class TimerService : Service() {
 
     }
 
+    fun cancelTimer() {
+        countDownTimer?.cancel()
+
+        countDownTimer = null
+
+        NotificationUtil.cancelNotification(1, this)
+
+        stopSelf()
+    }
+
+    fun pauseTimer() {
+        countDownTimer?.cancel()
+
+        countDownTimer = null
+
+        NotificationUtil.updateNotification(
+            this,
+            TimerUtil.getFormattedTime(timerMilliSecondsRemaining!!),
+            timerTitle!!,
+            Constants.FLAG_RESUME_TIMER
+        )
+
+        //isTimerRunning = false
+
+        isTimerPaused = true
+    }
+
+    fun resumeTimer() {
+        isTimerPaused = false
+
+        setUpTimer(timerMilliSecondsRemaining!!)
+    }
+
     override fun onDestroy() {
         Timber.d("timer service destroyed")
         super.onDestroy()
     }
 
     override fun onTaskRemoved(rootIntent: Intent?) {
+        Timber.d("onTaskRemoved called")
         super.onTaskRemoved(rootIntent)
     }
 

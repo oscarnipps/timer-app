@@ -61,7 +61,10 @@ class TimerListFragment : Fragment(), TimerListAdapter.TimerItemListener {
         Timber.d("timer start")
 
         val action =
-            TimerListFragmentDirections.actionTimerListFragmentToActiveTimerFragment(timerItem.timerValue)
+            TimerListFragmentDirections.actionTimerListFragmentToActiveTimerFragment(
+                timerItem.timerValue,
+                timerItem.title
+            )
 
         findNavController().navigate(action)
     }

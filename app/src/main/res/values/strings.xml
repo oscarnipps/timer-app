@@ -3,4 +3,7 @@
     <string name="start">start</string>
     <string name="timers">Timers</string>
     <string name="empty_timer_view">no created timer yet</string>
+    <string name="cancel">cancel</string>
+    <string name="pause">pause</string>
+    <string name="resume">resume</string>
 </resources>

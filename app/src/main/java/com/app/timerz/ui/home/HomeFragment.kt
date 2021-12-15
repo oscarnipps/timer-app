@@ -72,10 +72,8 @@ class HomeFragment : Fragment() {
         setUpSecondPicker()
 
         binding.startTimerButton.setOnClickListener {
-            //homeViewModel.setTimerValue(getTimerDuration())
-
             val action =
-                HomeFragmentDirections.actionHomeFragmentToActiveTimerFragment(getTimerDuration())
+                HomeFragmentDirections.actionHomeFragmentToActiveTimerFragment(getTimerDuration(),"New Timer")
 
             findNavController().navigate(action)
         }
