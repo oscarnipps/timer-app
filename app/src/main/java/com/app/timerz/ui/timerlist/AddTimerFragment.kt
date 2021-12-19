@@ -5,62 +5,134 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.NumberPicker
+import android.widget.Toast
 import androidx.databinding.DataBindingUtil
+import androidx.fragment.app.viewModels
+import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import com.app.timerz.R
 import com.app.timerz.data.local.database.entity.Timer
 import com.app.timerz.databinding.FragmentAddTimerBinding
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
+import dagger.hilt.android.AndroidEntryPoint
 import timber.log.Timber
+import java.text.SimpleDateFormat
+import java.time.LocalDate
+import java.time.LocalTime
+import java.time.format.DateTimeFormatter
+import java.util.*
 
+@AndroidEntryPoint
 class AddTimerFragment : BottomSheetDialogFragment() {
 
-    private val args : AddTimerFragmentArgs by navArgs()
-    private lateinit var binding : FragmentAddTimerBinding
+    private val args: AddTimerFragmentArgs by navArgs()
+    private val viewModel: TimerListViewModel by viewModels()
+    private lateinit var binding: FragmentAddTimerBinding
     private lateinit var hourPicker: NumberPicker
     private lateinit var minutePicker: NumberPicker
     private lateinit var secondsPicker: NumberPicker
     private var hourDuration = "00"
     private var minuteDuration = "00"
     private var secondDuration = "00"
+
+    //private lateinit var addTimerInterfaceListener : AddTimerInterfaceListener
     private lateinit var hourPickerValues: Array<String>
     private lateinit var minutePickerValues: Array<String>
     private lateinit var secondPickerValues: Array<String>
-    private var timerItem : Timer? = null
-    
+    private var timerItem: Timer? = null
+
+
     companion object {
         private const val MAX_HOUR_VALUE = 100
         private const val MAX_MINUTE_VALUE = 59
         private const val MAX_SECOND_VALUE = 59
     }
-    
+
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         getPickerValues()
     }
 
+/*    fun setListener(listener: AddTimerInterfaceListener) {
+        this.addTimerInterfaceListener = listener
+    }*/
+
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
-        savedInstanceState: Bundle?
+        savedInstanceState: Bundle?,
     ): View {
         binding = DataBindingUtil.inflate(inflater, R.layout.fragment_add_timer, container, false)
+
+        hourPicker = binding.hourPicker
+
+        minutePicker = binding.minutePicker
+
+        secondsPicker = binding.secondsPicker
+
         return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        binding.createTimer.setOnClickListener {
+            viewModel.validateTimerInput(getTimerDuration(), binding.timerTitle.text.toString())
+        }
+
+        viewModel.inputValidationResult().observe(viewLifecycleOwner, { isValidInput ->
+            if (isValidInput) {
+                createTimer()
+                return@observe
+            }
+
+            Toast.makeText(requireContext(), "invalid inputs", Toast.LENGTH_SHORT).show()
+        })
+
+        viewModel.isItemCreated().observe(viewLifecycleOwner, { itemCreatedSuccessfully ->
+            if (itemCreatedSuccessfully) {
+                findNavController().previousBackStackEntry?.savedStateHandle?.set("key", 10)
+                dismiss()
+                return@observe
+            }
+
+            Toast.makeText(requireContext(), "failed to create timer", Toast.LENGTH_SHORT).show()
+        })
+
+        viewModel.errorMessage().observe(viewLifecycleOwner, { message ->
+            Toast.makeText(requireContext(), message, Toast.LENGTH_SHORT).show()
+        })
+
         timerItem = args.timerItem
 
         if (timerItem != null) {
             setUpTimerValue()
+            return
         }
 
+        setUpHourPicker()
+
+        setUpMinutePicker()
+
+        setUpSecondPicker()
+    }
+
+    private fun createTimer() {
+        viewModel.createNewTimer(getTimerItem())
+    }
+
+    private fun getTimerItem(): Timer {
+        val item = Timer(
+            binding.timerTitle.toString(),
+            getTimerDuration(),
+            LocalDate.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:ss:mm"))
+        )
+
+        return item
     }
 
     private fun setUpTimerValue() {
-
         val hourMinuteSecond = timerItem!!.timerValue.split(":")
 
         hourDuration = hourMinuteSecond[0]
@@ -71,13 +143,13 @@ class AddTimerFragment : BottomSheetDialogFragment() {
 
         binding.timerTitle.setText(timerItem!!.title)
     }
-    
+
     private fun getPickerValues() {
-        hourPickerValues = getHourPickerValues(MAX_HOUR_VALUE).toTypedArray()
+        hourPickerValues = getPickerValues(MAX_HOUR_VALUE).toTypedArray()
 
-        minutePickerValues = getHourPickerValues(MAX_MINUTE_VALUE).toTypedArray()
+        minutePickerValues = getPickerValues(MAX_MINUTE_VALUE).toTypedArray()
 
-        secondPickerValues = getHourPickerValues(MAX_SECOND_VALUE).toTypedArray()
+        secondPickerValues = getPickerValues(MAX_SECOND_VALUE).toTypedArray()
     }
 
     private fun setUpSecondPicker() {
@@ -95,7 +167,7 @@ class AddTimerFragment : BottomSheetDialogFragment() {
 
                 Timber.d("second selected $secondDuration")
 
-                
+
             }
         }
     }
@@ -115,7 +187,7 @@ class AddTimerFragment : BottomSheetDialogFragment() {
 
                 Timber.d("minute selected $minuteDuration")
 
-                
+
             }
         }
     }
@@ -135,8 +207,6 @@ class AddTimerFragment : BottomSheetDialogFragment() {
                 hourDuration = hourPickerValues[newValuePos]
 
                 Timber.d("hour selected $hourDuration")
-
-                
             }
         }
     }
@@ -145,7 +215,7 @@ class AddTimerFragment : BottomSheetDialogFragment() {
         return "$hourDuration:$minuteDuration:$secondDuration"
     }
 
-    private fun getHourPickerValues(maxValue: Int): MutableList<String> {
+    private fun getPickerValues(maxValue: Int): MutableList<String> {
         val values = mutableListOf<String>()
 
         for (value in 0..maxValue) {

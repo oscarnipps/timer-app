@@ -1,9 +1,9 @@
 package com.app.timerz.ui.timerlist
 
 import android.view.LayoutInflater
-import android.view.View
 import android.view.ViewGroup
 import androidx.databinding.DataBindingUtil
+import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.app.timerz.R
 import com.app.timerz.data.local.database.entity.Timer
@@ -42,6 +42,14 @@ class TimerListAdapter(
         return timerList.size
     }
 
+    fun setData(newTimerList: List<Timer>) {
+        val diffUtilCallBack = TimerListDiffUtilCallback(timerList, newTimerList)
+
+        val diffResult = DiffUtil.calculateDiff(diffUtilCallBack)
+
+        diffResult.dispatchUpdatesTo(this)
+    }
+
     inner class TimerListViewHolder(var binding: TimerListItemBinding) :
         RecyclerView.ViewHolder(binding.root) {
 
@@ -64,4 +72,33 @@ class TimerListAdapter(
         }
 
     }
+
+    inner class TimerListDiffUtilCallback(var oldList: List<Timer>, var newList: List<Timer>) :
+        DiffUtil.Callback() {
+
+        override fun getOldListSize(): Int {
+            return oldList.size
+        }
+
+        override fun getNewListSize(): Int {
+            return newList.size
+        }
+
+        override fun areItemsTheSame(oldItemPosition: Int, newItemPosition: Int): Boolean {
+            return oldList[oldItemPosition].id == newList[newItemPosition].id
+        }
+
+        //use visual elements to define equality
+        override fun areContentsTheSame(oldItemPosition: Int, newItemPosition: Int): Boolean {
+            return when {
+                oldList[oldItemPosition].title != newList[newItemPosition].title -> false
+
+                oldList[oldItemPosition].timerValue != newList[newItemPosition].timerValue -> false
+
+                else -> true
+            }
+        }
+
+    }
+
 }

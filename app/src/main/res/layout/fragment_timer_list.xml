@@ -34,6 +34,16 @@
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
 
+            <ImageView
+                android:id="@+id/delete_timers"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="24dp"
+                android:layout_marginEnd="24dp"
+                android:src="@drawable/ic_delete_all"
+                app:layout_constraintEnd_toStartOf="@+id/create_timer"
+                app:layout_constraintTop_toTopOf="parent" />
+
 
         </androidx.constraintlayout.widget.ConstraintLayout>
 

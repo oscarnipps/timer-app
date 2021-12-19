@@ -3,9 +3,12 @@ package com.app.timerz.ui.home
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import dagger.hilt.android.lifecycle.HiltViewModel
 import timber.log.Timber
+import javax.inject.Inject
 
-class HomeViewModel : ViewModel() {
+@HiltViewModel
+class HomeViewModel @Inject constructor () : ViewModel() {
 
     private var _isValidTimerValue: MutableLiveData<Boolean> = MutableLiveData()
     private var _previouslySetTimerValue = ""

@@ -17,7 +17,7 @@ android {
         versionCode 1
         versionName "1.0"
 
-        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+        testInstrumentationRunner "com.app.timerz.HiltTestRunner"
     }
 
     buildTypes {
@@ -60,6 +60,9 @@ dependencies {
     //room
     implementation "androidx.room:room-runtime:$room_version"
     kapt "androidx.room:room-compiler:$room_version"
+
+    // optional - RxJava2 support for Room
+    implementation "androidx.room:room-rxjava2:$room_version"
 
     //firebase crashlytics
     implementation 'com.google.firebase:firebase-crashlytics:18.2.4'

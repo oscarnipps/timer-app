@@ -10,8 +10,14 @@
 
         <com.google.android.material.progressindicator.CircularProgressIndicator
             android:id="@+id/timer_progress"
-            android:layout_width="350dp"
-            android:layout_height="400dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:indeterminate="false"
+            app:trackThickness="6dp"
+
+            app:indicatorSize="300dp"
+            app:trackColor="#EDE9E9"
+            app:trackCornerRadius="24dp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
@@ -38,7 +44,8 @@
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toStartOf="@+id/cancel"
             app:layout_constraintHorizontal_bias="0.5"
-            app:layout_constraintStart_toStartOf="parent" />
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/timer_progress" />
 
         <com.google.android.material.button.MaterialButton
             android:id="@+id/cancel"
@@ -49,7 +56,8 @@
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.5"
-            app:layout_constraintStart_toEndOf="@+id/pause" />
+            app:layout_constraintStart_toEndOf="@+id/pause"
+            app:layout_constraintTop_toBottomOf="@+id/timer_progress" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>

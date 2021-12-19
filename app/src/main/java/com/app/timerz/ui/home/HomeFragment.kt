@@ -12,8 +12,10 @@ import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import com.app.timerz.R
 import com.app.timerz.databinding.FragmentHomeBinding
+import dagger.hilt.android.AndroidEntryPoint
 import timber.log.Timber
 
+@AndroidEntryPoint
 class HomeFragment : Fragment() {
 
     private lateinit var binding: FragmentHomeBinding
@@ -113,11 +115,11 @@ class HomeFragment : Fragment() {
     }
 
     private fun getPickerValues() {
-        hourPickerValues = getHourPickerValues(MAX_HOUR_VALUE).toTypedArray()
+        hourPickerValues = getPickerValues(MAX_HOUR_VALUE).toTypedArray()
 
-        minutePickerValues = getHourPickerValues(MAX_MINUTE_VALUE).toTypedArray()
+        minutePickerValues = getPickerValues(MAX_MINUTE_VALUE).toTypedArray()
 
-        secondPickerValues = getHourPickerValues(MAX_SECOND_VALUE).toTypedArray()
+        secondPickerValues = getPickerValues(MAX_SECOND_VALUE).toTypedArray()
     }
 
     private fun setUpSecondPicker() {
@@ -185,7 +187,7 @@ class HomeFragment : Fragment() {
         return "$hourDuration:$minuteDuration:$secondDuration"
     }
 
-    private fun getHourPickerValues(maxValue: Int): MutableList<String> {
+    private fun getPickerValues(maxValue: Int): MutableList<String> {
         val values = mutableListOf<String>()
 
         for (value in 0..maxValue) {
