@@ -16,9 +16,7 @@ import com.app.timerz.databinding.FragmentAddTimerBinding
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import dagger.hilt.android.AndroidEntryPoint
 import timber.log.Timber
-import java.text.SimpleDateFormat
-import java.time.LocalDate
-import java.time.LocalTime
+import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 import java.util.*
 
@@ -34,8 +32,6 @@ class AddTimerFragment : BottomSheetDialogFragment() {
     private var hourDuration = "00"
     private var minuteDuration = "00"
     private var secondDuration = "00"
-
-    //private lateinit var addTimerInterfaceListener : AddTimerInterfaceListener
     private lateinit var hourPickerValues: Array<String>
     private lateinit var minutePickerValues: Array<String>
     private lateinit var secondPickerValues: Array<String>
@@ -46,6 +42,7 @@ class AddTimerFragment : BottomSheetDialogFragment() {
         private const val MAX_HOUR_VALUE = 100
         private const val MAX_MINUTE_VALUE = 59
         private const val MAX_SECOND_VALUE = 59
+        private const val DATE_PATTERN = "yyyy-MM-dd hh:mm:ss"
     }
 
 
@@ -53,10 +50,6 @@ class AddTimerFragment : BottomSheetDialogFragment() {
         super.onCreate(savedInstanceState)
         getPickerValues()
     }
-
-/*    fun setListener(listener: AddTimerInterfaceListener) {
-        this.addTimerInterfaceListener = listener
-    }*/
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -78,12 +71,15 @@ class AddTimerFragment : BottomSheetDialogFragment() {
         super.onViewCreated(view, savedInstanceState)
 
         binding.createTimer.setOnClickListener {
-            viewModel.validateTimerInput(getTimerDuration(), binding.timerTitle.text.toString())
+            viewModel.validateTimerInput(
+                getTimerDuration(),
+                binding.timerTitle.text.toString()
+            )
         }
 
         viewModel.inputValidationResult().observe(viewLifecycleOwner, { isValidInput ->
             if (isValidInput) {
-                createTimer()
+                saveTimer()
                 return@observe
             }
 
@@ -92,12 +88,22 @@ class AddTimerFragment : BottomSheetDialogFragment() {
 
         viewModel.isItemCreated().observe(viewLifecycleOwner, { itemCreatedSuccessfully ->
             if (itemCreatedSuccessfully) {
-                findNavController().previousBackStackEntry?.savedStateHandle?.set("key", 10)
+                findNavController().popBackStack()
                 dismiss()
                 return@observe
             }
 
             Toast.makeText(requireContext(), "failed to create timer", Toast.LENGTH_SHORT).show()
+        })
+
+        viewModel.isItemUpdated().observe(viewLifecycleOwner, { itemUpdatedSuccessfully ->
+            if (itemUpdatedSuccessfully) {
+                findNavController().popBackStack()
+                dismiss()
+                return@observe
+            }
+
+            Toast.makeText(requireContext(), "failed to update timer", Toast.LENGTH_SHORT).show()
         })
 
         viewModel.errorMessage().observe(viewLifecycleOwner, { message ->
@@ -106,9 +112,21 @@ class AddTimerFragment : BottomSheetDialogFragment() {
 
         timerItem = args.timerItem
 
+        setUpTimerPicker()
+    }
+
+    private fun saveTimer() {
+        if (timerItem != null) {
+            editExistingTimer()
+            return
+        }
+
+        createNewTimer()
+    }
+
+    private fun setUpTimerPicker() {
         if (timerItem != null) {
             setUpTimerValue()
-            return
         }
 
         setUpHourPicker()
@@ -118,18 +136,27 @@ class AddTimerFragment : BottomSheetDialogFragment() {
         setUpSecondPicker()
     }
 
-    private fun createTimer() {
+    private fun createNewTimer() {
         viewModel.createNewTimer(getTimerItem())
     }
 
-    private fun getTimerItem(): Timer {
-        val item = Timer(
-            binding.timerTitle.toString(),
-            getTimerDuration(),
-            LocalDate.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:ss:mm"))
-        )
+    private fun editExistingTimer() {
+        timerItem?.title = binding.timerTitle.text.toString().trim()
 
-        return item
+        timerItem?.updatedAt =
+            LocalDateTime.now().format(DateTimeFormatter.ofPattern(DATE_PATTERN))
+
+        timerItem?.timerValue = getTimerDuration()
+
+        viewModel.updateTimer(timerItem!!)
+    }
+
+    private fun getTimerItem(): Timer {
+        return Timer(
+            binding.timerTitle.text.toString().trim(),
+            getTimerDuration(),
+            LocalDateTime.now().format(DateTimeFormatter.ofPattern(DATE_PATTERN))
+        )
     }
 
     private fun setUpTimerValue() {
@@ -232,5 +259,4 @@ class AddTimerFragment : BottomSheetDialogFragment() {
 
         return values
     }
-
 }

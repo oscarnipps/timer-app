@@ -15,6 +15,7 @@ import io.reactivex.observers.DisposableSingleObserver
 import io.reactivex.schedulers.Schedulers
 import timber.log.Timber
 import java.util.ArrayList
+import java.util.concurrent.Callable
 import javax.inject.Inject
 
 
@@ -22,8 +23,9 @@ import javax.inject.Inject
 class TimerListViewModel @Inject constructor(private val timerRepo: TimerRepo) : ViewModel() {
 
     private val _isInputValid: MutableLiveData<Boolean> = MutableLiveData()
+    private val _isItemCreated: MutableLiveData<Boolean> = MutableLiveData()
+    private val _isItemEdited: MutableLiveData<Boolean> = MutableLiveData()
     private val _errorMessage: MutableLiveData<String> = MutableLiveData()
-    private val _isItemCreated : MutableLiveData<Boolean> = MutableLiveData()
     private var compositeDisposable = CompositeDisposable()
 
     fun getTimersList(): LiveData<List<Timer>> {
@@ -65,6 +67,10 @@ class TimerListViewModel @Inject constructor(private val timerRepo: TimerRepo) :
         return _isItemCreated
     }
 
+    fun isItemUpdated(): LiveData<Boolean> {
+        return _isItemEdited
+    }
+
     fun errorMessage(): LiveData<String> {
         return _errorMessage
     }
@@ -75,14 +81,38 @@ class TimerListViewModel @Inject constructor(private val timerRepo: TimerRepo) :
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(
-                    {rowCount -> onItemCreatedSuccessfully(rowCount)},
-                    {error -> handleError(error)}
+                    { rowCount -> onItemCreatedSuccessfully(rowCount) },
+                    { error -> handleError(error) }
                 )
         )
     }
 
+    fun updateTimer(timerItem: Timer) {
+        compositeDisposable.add(
+            Single
+                .fromCallable { timerRepo.editTimer(timerItem) }
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(
+                    { rowUpdated -> onItemUpdatedSuccessfully(rowUpdated) },
+                    { error -> handleError(error) }
+                )
+        )
+    }
+
+    private fun onItemUpdatedSuccessfully(rowUpdated: Int) {
+        Timber.d("timer updated with row count : $rowUpdated")
+
+        if (rowUpdated > 0) {
+            _isItemEdited.value = true
+            return
+        }
+
+        _isItemEdited.value = false
+    }
+
     private fun handleError(error: Throwable) {
-      _errorMessage.value = error.localizedMessage
+        _errorMessage.value = error.localizedMessage
     }
 
     private fun onItemCreatedSuccessfully(rowCount: Long) {
@@ -94,6 +124,13 @@ class TimerListViewModel @Inject constructor(private val timerRepo: TimerRepo) :
         }
 
         _isItemCreated.value = false
+    }
+
+    fun deleteTimer(id: Int) {
+       /* compositeDisposable.add(
+            Single.fromCallable { timerRepo.deleteTimer(id) }
+
+        )*/
     }
 
     override fun onCleared() {

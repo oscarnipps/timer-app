@@ -67,21 +67,12 @@ class TimerListFragment : Fragment(), TimerListAdapter.TimerItemListener {
             }
         })
 
-       /* listOf(
-            Timer(1, "Plank workout timer", "00:01:33", "",""),
-            Timer(2, "workout timer", "00:06:30", "",""),
-            Timer(3, "legs workout timer", "00:00:43", "","")
-        )*/
-
-        timerAdapter = TimerListAdapter(
-            emptyList(),
-            this
-        )
+        timerAdapter = TimerListAdapter(this)
 
         recyclerView = binding.timerListRecyclerview
 
         recyclerView.apply {
-            layoutManager = LinearLayoutManager(requireActivity())
+            layoutManager = LinearLayoutManager(requireContext())
             adapter = timerAdapter
         }
 
@@ -97,10 +88,7 @@ class TimerListFragment : Fragment(), TimerListAdapter.TimerItemListener {
         }
 
         timerViewModel.getTimersList().observe(viewLifecycleOwner , {timerList ->
-            Timber.d("timer list : $timerList")
-
             timerAdapter.setData(timerList)
-
         })
 
     }
@@ -127,9 +115,7 @@ class TimerListFragment : Fragment(), TimerListAdapter.TimerItemListener {
     }
 
     override fun onDeleteTimerClicked(timerItem: Timer) {
-        Timber.d("timer deleted")
-
-        //timerViewModel.deleteTimer(timerItem.id)
+        timerViewModel.deleteTimer(timerItem.id)
     }
 
 
@@ -144,11 +130,4 @@ class TimerListFragment : Fragment(), TimerListAdapter.TimerItemListener {
         }
         return false
     }
-
-/*    override fun onCreateTimerButtonClicked(id: Int) {
-        findNavController().currentBackStackEntry?.savedStateHandle?.getLiveData<Int>("id")?.observe(viewLifecycleOwner,{
-            Toast.makeText(requireContext(),"created" , Toast.LENGTH_SHORT).show()
-        })
-    }*/
-
 }

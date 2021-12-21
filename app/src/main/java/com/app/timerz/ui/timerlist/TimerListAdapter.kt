@@ -8,11 +8,14 @@ import androidx.recyclerview.widget.RecyclerView
 import com.app.timerz.R
 import com.app.timerz.data.local.database.entity.Timer
 import com.app.timerz.databinding.TimerListItemBinding
+import kotlinx.android.synthetic.main.timer_list_item.view.*
+import timber.log.Timber
 
 class TimerListAdapter(
-    private var timerList: List<Timer>,
     private var timerItemListener: TimerItemListener
 ) : RecyclerView.Adapter<TimerListAdapter.TimerListViewHolder>() {
+
+    private var timerList: ArrayList<Timer> = ArrayList()
 
     interface TimerItemListener {
         fun onStartTimerClicked(timerItem: Timer)
@@ -43,9 +46,15 @@ class TimerListAdapter(
     }
 
     fun setData(newTimerList: List<Timer>) {
+        Timber.d("timer list : $newTimerList")
+
         val diffUtilCallBack = TimerListDiffUtilCallback(timerList, newTimerList)
 
         val diffResult = DiffUtil.calculateDiff(diffUtilCallBack)
+
+        timerList.clear()
+
+        timerList.addAll(newTimerList)
 
         diffResult.dispatchUpdatesTo(this)
     }
@@ -68,12 +77,16 @@ class TimerListAdapter(
         }
 
         fun bind(item: Timer) {
+            Timber.d("timer title : ${item.title}")
+
             //set the data on the current view
+            binding.timerName.text = item.title
+            binding.timerValue.text = item.timerValue
         }
 
     }
 
-    inner class TimerListDiffUtilCallback(var oldList: List<Timer>, var newList: List<Timer>) :
+    inner class TimerListDiffUtilCallback(private val oldList: List<Timer>, private val newList: List<Timer>) :
         DiffUtil.Callback() {
 
         override fun getOldListSize(): Int {
@@ -90,13 +103,9 @@ class TimerListAdapter(
 
         //use visual elements to define equality
         override fun areContentsTheSame(oldItemPosition: Int, newItemPosition: Int): Boolean {
-            return when {
-                oldList[oldItemPosition].title != newList[newItemPosition].title -> false
-
-                oldList[oldItemPosition].timerValue != newList[newItemPosition].timerValue -> false
-
-                else -> true
-            }
+            val oldItem = oldList[oldItemPosition]
+            val newItem = newList[newItemPosition]
+            return oldItem.title == newItem.title
         }
 
     }

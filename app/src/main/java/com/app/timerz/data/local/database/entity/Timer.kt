@@ -9,15 +9,15 @@ import androidx.room.PrimaryKey
 @Entity
 data class Timer(
     @PrimaryKey(autoGenerate = true)
-    val id: Int,
+    var id: Int,
 
-    val title: String,
+    var title: String,
 
-    val timerValue: String,
+    var timerValue: String,
 
-    val createdAt: String? = null,
+    var createdAt: String? = null,
 
-    val updatedAt: String? = null,
+    var updatedAt: String? = null,
 
     ) : Parcelable {
     constructor(parcel: Parcel) : this(
@@ -26,8 +26,7 @@ data class Timer(
         parcel.readString()!!,
         parcel.readString()!!,
         parcel.readString()!!
-    ) {
-    }
+    )
 
     override fun writeToParcel(parcel: Parcel, flags: Int) {
         parcel.writeInt(id)
