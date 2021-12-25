@@ -18,6 +18,7 @@ import com.app.timerz.R
 import com.app.timerz.data.Constants
 import com.app.timerz.data.TimerService
 import com.app.timerz.databinding.FragmentActiveTimerBinding
+import com.app.timerz.util.TimerUtil
 import timber.log.Timber
 
 class ActiveTimerFragment : Fragment(), ServiceConnection {
@@ -29,26 +30,24 @@ class ActiveTimerFragment : Fragment(), ServiceConnection {
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
-        savedInstanceState: Bundle?
+        savedInstanceState: Bundle?,
     ): View {
         binding =
             DataBindingUtil.inflate(inflater, R.layout.fragment_active_timer, container, false)
 
         Timber.d("timer duration : ${args.timerDuration}")
 
-
         return binding.root
     }
 
 
-    override fun onPause() {
-        super.onPause()
-        Timber.d("onPause")
-    }
-
     override fun onStart() {
         super.onStart()
 
+        startTimerService()
+    }
+
+    private fun startTimerService() {
         val serviceIntent = Intent(requireActivity(), TimerService::class.java)
 
         serviceIntent.apply {
@@ -60,7 +59,6 @@ class ActiveTimerFragment : Fragment(), ServiceConnection {
         requireActivity().startService(serviceIntent)
 
         requireActivity().bindService(serviceIntent, this, Context.BIND_AUTO_CREATE)
-
     }
 
 
@@ -69,29 +67,19 @@ class ActiveTimerFragment : Fragment(), ServiceConnection {
         binding.pause.text = text
     }
 
-    override fun onStop() {
-        super.onStop()
-        Timber.d("onStop")
-    }
-
     private fun cancelTimer() {
         timerService?.cancelTimer()
         findNavController().popBackStack()
     }
 
+    private fun restartTimer() {
+        startTimerService()
+        binding.restart.visibility = View.GONE
+        binding.activeTimerControlGroup.visibility = View.VISIBLE
+    }
+
     private fun pauseTimer() {
-/*        updateTimerControlButtonUi(
-            R.color.button_default,
-            resources.getText(R.string.resume)
-        )
-
-        timerService?.pauseTimer()*/
-
         if (timerService?.isTimerPaused!!) {
-           /* updateTimerButtonUi(R.color.timer_paused_color, resources.getText(R.string.pause))
-
-            timerService?.pauseTimer()*/
-
 
             updateTimerButtonUi(R.color.timer_paused_color, resources.getText(R.string.pause))
 
@@ -100,14 +88,9 @@ class ActiveTimerFragment : Fragment(), ServiceConnection {
             return
         }
 
-
         updateTimerButtonUi(R.color.button_default, resources.getText(R.string.resume))
+
         timerService?.pauseTimer()
-
-
-      /*  updateTimerButtonUi(R.color.button_default, resources.getText(R.string.resume))
-
-        timerService?.resumeTimer()*/
     }
 
     override fun onDestroy() {
@@ -115,19 +98,19 @@ class ActiveTimerFragment : Fragment(), ServiceConnection {
 
         Timber.d("onDestroy")
 
-        requireActivity().unbindService(this)
+            requireActivity().unbindService(this)
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        binding.cancel.setOnClickListener {
-            cancelTimer()
-        }
+        binding.timerTitle.text = args.timerTitle
 
-        binding.pause.setOnClickListener {
-            pauseTimer()
-        }
+        binding.cancel.setOnClickListener { cancelTimer() }
+
+        binding.pause.setOnClickListener { pauseTimer() }
+
+        binding.restart.setOnClickListener { restartTimer() }
     }
 
     override fun onServiceConnected(component: ComponentName?, binder: IBinder?) {
@@ -137,6 +120,8 @@ class ActiveTimerFragment : Fragment(), ServiceConnection {
 
         timerService = timerServiceBinder.getTimerService()
 
+        setUpTimerValueObserver()
+
         updateTimerUi()
     }
 
@@ -144,26 +129,41 @@ class ActiveTimerFragment : Fragment(), ServiceConnection {
         Timber.d("timer service disconnected")
     }
 
-    private fun updateTimerUi() {
-        timerService?.timerValueLiveData?.observe(viewLifecycleOwner, {
-            binding.minutePicker.text = it
+    private fun setUpTimerValueObserver() {
+        timerService?.timerValueLiveData?.observe(viewLifecycleOwner, { timerValue ->
+
+            updateTimerProgressBar(timerValue)
+
+            binding.timerValue.text = timerValue
+
+            if (timerValue == "00:00:00") {
+                binding.timerValue.text = args.timerDuration
+
+                binding.restart.visibility = View.VISIBLE
+
+                binding.activeTimerControlGroup.visibility = View.GONE
+
+                binding.timerProgress.progress = 100
+            }
         })
+    }
 
+    private fun updateTimerUi() {
         if (timerService?.isTimerPaused!!) {
-
-            updateTimerButtonUi(
-                R.color.button_default,
-                resources.getText(R.string.resume)
-            )
-
+            updateTimerButtonUi(R.color.button_default, resources.getText(R.string.resume))
             return
         }
 
-
-        updateTimerButtonUi(
-            R.color.timer_paused_color,
-            resources.getText(R.string.pause)
-        )
+        updateTimerButtonUi(R.color.timer_paused_color, resources.getText(R.string.pause))
     }
+
+    private fun updateTimerProgressBar(timerValue: String) {
+        val time = TimerUtil.getTimerValueInMilliseconds(timerValue).toFloat()
+
+        val total = TimerUtil.getTimerValueInMilliseconds(args.timerDuration)
+
+        binding.timerProgress.progress = (time / total * 100).toInt()
+    }
+
 
 }

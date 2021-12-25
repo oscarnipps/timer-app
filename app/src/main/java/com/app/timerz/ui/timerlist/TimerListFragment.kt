@@ -13,20 +13,20 @@ import androidx.recyclerview.widget.RecyclerView
 import com.app.timerz.R
 import com.app.timerz.data.local.database.entity.Timer
 import com.app.timerz.databinding.FragmentTimerListBinding
-import com.app.timerz.ui.home.HomeViewModel
 import dagger.hilt.android.AndroidEntryPoint
 import timber.log.Timber
 import android.app.ActivityManager
-import android.content.Context
-import android.content.Context.ACTIVITY_SERVICE
 import android.widget.Toast
-import androidx.core.content.ContextCompat
 
 import androidx.core.content.ContextCompat.getSystemService
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
-import androidx.lifecycle.LifecycleOwner
-import androidx.navigation.NavBackStackEntry
+import androidx.lifecycle.Observer
+import androidx.navigation.findNavController
+import com.app.timerz.data.Resource
+import io.reactivex.android.schedulers.AndroidSchedulers
+import io.reactivex.disposables.CompositeDisposable
+import io.reactivex.schedulers.Schedulers
 
 
 @AndroidEntryPoint
@@ -35,7 +35,7 @@ class TimerListFragment : Fragment(), TimerListAdapter.TimerItemListener {
     private lateinit var binding: FragmentTimerListBinding
     private lateinit var timerAdapter: TimerListAdapter
     private lateinit var recyclerView: RecyclerView
-    private val timerViewModel : TimerListViewModel by viewModels()
+    private val timerViewModel: TimerListViewModel by viewModels()
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -55,13 +55,13 @@ class TimerListFragment : Fragment(), TimerListAdapter.TimerItemListener {
             if (event == Lifecycle.Event.ON_RESUME && navBackStackEntry.savedStateHandle.contains("key")) {
                 val result = navBackStackEntry.savedStateHandle.get<Int>("key")
                 Timber.d("create timer with row count : $result")
-                Toast.makeText(requireContext(),"created : $result",Toast.LENGTH_SHORT).show()
+                Toast.makeText(requireContext(), "created : $result", Toast.LENGTH_SHORT).show()
             }
         }
 
         navBackStackEntry.lifecycle.addObserver(observer)
 
-        viewLifecycleOwner.lifecycle.addObserver(LifecycleEventObserver{source , event ->
+        viewLifecycleOwner.lifecycle.addObserver(LifecycleEventObserver { source, event ->
             if (event == Lifecycle.Event.ON_DESTROY) {
                 navBackStackEntry.lifecycle.removeObserver(observer)
             }
@@ -76,26 +76,57 @@ class TimerListFragment : Fragment(), TimerListAdapter.TimerItemListener {
             adapter = timerAdapter
         }
 
-        binding.createTimer.setOnClickListener{
+        binding.createTimer.setOnClickListener {
             val action =
                 TimerListFragmentDirections.actionTimerListFragmentToAddTimerFragment(null)
 
             findNavController().navigate(action)
         }
 
-        binding.deleteTimers.setOnClickListener{
-            //timerViewModel.deleteAllTimers()
+        binding.deleteTimers.setOnClickListener {
+            timerViewModel.deleteAllTimers()
         }
 
-        timerViewModel.getTimersList().observe(viewLifecycleOwner , {timerList ->
-            timerAdapter.setData(timerList)
+        timerViewModel.getTimersList().observe(viewLifecycleOwner, { timerList ->
+            Timber.d("timers : $timerList")
+
+            if (!timerList.isEmpty()) {
+                binding.emptyState.visibility = View.GONE
+                timerAdapter.submitList(timerList.toList())
+                timerAdapter.notifyDataSetChanged()
+                return@observe
+            }
+
+            binding.emptyState.visibility = View.VISIBLE
         })
+
+        timerViewModel.databaseEvent().observe(viewLifecycleOwner, databaseEventObserver())
 
     }
 
-    override fun onStartTimerClicked(timerItem: Timer) {
-        Timber.d("timer start")
+    private fun databaseEventObserver(): Observer<Resource<Int>> {
+        return Observer { result ->
+            when (result.status) {
 
+                Resource.Status.LOADING -> {
+                    //todo : show progress bar
+                }
+
+                Resource.Status.ERROR -> {
+                    val messageResId = result.messageResId ?: R.string.error_message
+                    Toast.makeText(requireContext(), messageResId, Toast.LENGTH_SHORT).show()
+                }
+
+                Resource.Status.SUCCESS -> {
+                    Timber.d("res id ${result.messageResId}")
+                    Toast.makeText(requireContext(), result.messageResId!!, Toast.LENGTH_SHORT)
+                        .show()
+                }
+            }
+        }
+    }
+
+    override fun onStartTimerClicked(timerItem: Timer) {
         val action =
             TimerListFragmentDirections.actionTimerListFragmentToActiveTimerFragment(
                 timerItem.timerValue,
@@ -120,7 +151,7 @@ class TimerListFragment : Fragment(), TimerListAdapter.TimerItemListener {
 
 
     private fun isServiceRunning(serviceClass: Class<*>): Boolean {
-        val manager = getSystemService(requireContext(),serviceClass) as ActivityManager?
+        val manager = getSystemService(requireContext(), serviceClass) as ActivityManager?
 
         for (service in manager!!.getRunningServices(Int.MAX_VALUE)) {
             if (serviceClass.name == service.service.className) {

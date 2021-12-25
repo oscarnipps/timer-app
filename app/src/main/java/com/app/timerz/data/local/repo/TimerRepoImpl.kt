@@ -4,6 +4,7 @@ import androidx.lifecycle.LiveData
 import com.app.timerz.data.local.database.AppDatabase
 import com.app.timerz.data.local.database.dao.TimerDao
 import com.app.timerz.data.local.database.entity.Timer
+import io.reactivex.Flowable
 import io.reactivex.Single
 import javax.inject.Inject
 
@@ -28,5 +29,4 @@ class TimerRepoImpl @Inject constructor(var timerDao: TimerDao) : TimerRepo {
     override fun deleteAllTimers() : Int {
         return timerDao.deleteAllTimers()
     }
-
 }

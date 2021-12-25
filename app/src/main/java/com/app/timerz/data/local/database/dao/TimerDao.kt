@@ -4,6 +4,7 @@ import androidx.lifecycle.LiveData
 import androidx.room.*
 import androidx.room.OnConflictStrategy.REPLACE
 import com.app.timerz.data.local.database.entity.Timer
+import io.reactivex.Flowable
 import io.reactivex.Single
 
 @Dao
@@ -23,6 +24,4 @@ interface TimerDao {
 
     @Query("DELETE FROM Timer")
     fun deleteAllTimers(): Int
-
-
 }

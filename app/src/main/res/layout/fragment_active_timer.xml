@@ -13,27 +13,40 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:indeterminate="false"
-            app:trackThickness="6dp"
-
+            android:progress="100"
             app:indicatorSize="300dp"
-            app:trackColor="#EDE9E9"
-            app:trackCornerRadius="24dp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+            app:layout_constraintTop_toTopOf="parent"
+            app:trackColor="#EDE9E9"
+            app:trackCornerRadius="24dp"
+            app:trackThickness="6dp" />
 
         <TextView
-            android:id="@+id/minute_picker"
+            android:id="@+id/timer_title"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="00 : 00 : 10"
+            android:layout_marginBottom="32dp"
+            android:textSize="18sp"
+            android:textAlignment="center"
+            app:layout_constraintBottom_toTopOf="@+id/timer_progress"
+            app:layout_constraintEnd_toEndOf="parent"
+            android:textStyle="bold"
+            app:layout_constraintStart_toStartOf="parent"
+            tools:text="Plank Workout " />
+
+        <TextView
+            android:id="@+id/timer_value"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
             android:textSize="24sp"
             android:timePickerMode="spinner"
             app:layout_constraintBottom_toBottomOf="@+id/timer_progress"
             app:layout_constraintEnd_toEndOf="@+id/timer_progress"
             app:layout_constraintStart_toStartOf="@+id/timer_progress"
-            app:layout_constraintTop_toTopOf="@+id/timer_progress" />
+            app:layout_constraintTop_toTopOf="@+id/timer_progress"
+            tools:text="00 : 00 : 10" />
 
         <com.google.android.material.button.MaterialButton
             android:id="@+id/pause"
@@ -58,6 +71,24 @@
             app:layout_constraintHorizontal_bias="0.5"
             app:layout_constraintStart_toEndOf="@+id/pause"
             app:layout_constraintTop_toBottomOf="@+id/timer_progress" />
+
+        <com.google.android.material.button.MaterialButton
+            android:visibility="gone"
+            android:id="@+id/restart"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/restart"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/timer_progress"
+            app:layout_constraintVertical_bias="0.404" />
+
+        <androidx.constraintlayout.widget.Group
+            android:id="@+id/active_timer_control_group"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:constraint_referenced_ids="pause,cancel" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>

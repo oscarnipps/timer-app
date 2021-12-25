@@ -21,8 +21,6 @@ class TimerService : Service() {
     private var timerValue: String? = null
     private lateinit var notification: Notification
     val timerValueLiveData: MutableLiveData<String> = MutableLiveData()
-
-    //var isTimerRunning = false
     var isTimerPaused = false
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
@@ -54,8 +52,6 @@ class TimerService : Service() {
 
                 Timber.d("timer title passed to service : $timerTitle")
 
-                //showTimerNotification(timerValue!!, timerTitle!! , Constants.FLAG_PAUSE_TIMER)
-
                 setUpTimer(TimerUtil.getTimerValueInMilliseconds(timerValue!!))
             }
 
@@ -64,10 +60,6 @@ class TimerService : Service() {
     }
 
     override fun onBind(intent: Intent?): IBinder {
-        //Timber.d("onBind called")
-
-        //handleIntentAction(intent)
-
         return binder
     }
 
@@ -80,39 +72,43 @@ class TimerService : Service() {
 
         if (countDownTimer == null) {
 
-            countDownTimer = object : CountDownTimer(timerDurationMilliSeconds, 1000) {
-
-                override fun onTick(millisUntilFinished: Long) {
-                    val formattedValue = TimerUtil.getFormattedTime(millisUntilFinished)
-
-                    timerValueLiveData.value = formattedValue
-
-                    timerMilliSecondsRemaining = millisUntilFinished
-
-                    Timber.d("onTick : $formattedValue")
-
-                    NotificationUtil.updateNotification(
-                        this@TimerService,
-                        formattedValue,
-                        timerTitle!!,
-                        Constants.FLAG_PAUSE_TIMER
-                    )
-                }
-
-                override fun onFinish() {
-                    countDownTimer = null
-                    isTimerPaused = false
-                }
-            }
+            countDownTimer = getCountDownTimer(timerDurationMilliSeconds)
 
             if (isTimerPaused) {
-                //showTimerNotification(timerValue!!, timerTitle!! , Constants.FLAG_RESUME_TIMER)
-                //resumeTimer()
                 return
             }
         }
         countDownTimer?.start()
     }
+
+    private fun getCountDownTimer(timerDurationMilliSeconds: Long) =
+        object : CountDownTimer(timerDurationMilliSeconds, 1000) {
+
+            override fun onTick(millisUntilFinished: Long) {
+                val formattedValue = TimerUtil.getTimeStringValue(millisUntilFinished)
+
+                timerValueLiveData.value = formattedValue
+
+                timerMilliSecondsRemaining = millisUntilFinished
+
+                Timber.d("onTick : $formattedValue")
+
+                NotificationUtil.updateNotification(
+                    this@TimerService,
+                    formattedValue,
+                    timerTitle!!,
+                    Constants.FLAG_PAUSE_TIMER
+                )
+            }
+
+            override fun onFinish() {
+                countDownTimer = null
+
+                isTimerPaused = false
+
+                stopSelf()
+            }
+        }
 
     private fun showTimerNotification(timerValue: String, title: String, flag: String) {
         notification = NotificationUtil.getNotification(
@@ -128,7 +124,6 @@ class TimerService : Service() {
     override fun onUnbind(intent: Intent?): Boolean {
         Timber.d("timer service disconnected")
         return super.onUnbind(intent)
-
     }
 
     fun cancelTimer() {
@@ -148,12 +143,10 @@ class TimerService : Service() {
 
         NotificationUtil.updateNotification(
             this,
-            TimerUtil.getFormattedTime(timerMilliSecondsRemaining!!),
+            TimerUtil.getTimeStringValue(timerMilliSecondsRemaining!!),
             timerTitle!!,
             Constants.FLAG_RESUME_TIMER
         )
-
-        //isTimerRunning = false
 
         isTimerPaused = true
     }

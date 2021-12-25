@@ -6,4 +6,16 @@
     <string name="cancel">cancel</string>
     <string name="pause">pause</string>
     <string name="resume">resume</string>
+    <string name="timer_creation_success">timer created successfully</string>
+    <string name="timer_creation_failure">error creating timer</string>
+    <string name="timer_update_success">timer updated successfully</string>
+    <string name="timer_update_failure">error updating timer</string>
+    <string name="timer_deletion_success">timer deleted successfully</string>
+    <string name="timer_deletion_failure">failed to delete timer</string>
+    <string name="error_message">error occurred with failed operation</string>
+    <string name="create">create</string>
+    <string name="update">update</string>
+    <string name="timers_deletion_success">deleted timers successfully</string>
+    <string name="timers_deletion_failure">failed to delete all timers</string>
+    <string name="restart">restart</string>
 </resources>

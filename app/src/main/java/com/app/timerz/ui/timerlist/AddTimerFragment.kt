@@ -1,6 +1,7 @@
 package com.app.timerz.ui.timerlist
 
 import android.os.Bundle
+import android.provider.SyncStateContract.Helpers.update
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -8,9 +9,11 @@ import android.widget.NumberPicker
 import android.widget.Toast
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.Observer
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import com.app.timerz.R
+import com.app.timerz.data.Resource
 import com.app.timerz.data.local.database.entity.Timer
 import com.app.timerz.databinding.FragmentAddTimerBinding
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
@@ -86,7 +89,10 @@ class AddTimerFragment : BottomSheetDialogFragment() {
             Toast.makeText(requireContext(), "invalid inputs", Toast.LENGTH_SHORT).show()
         })
 
-        viewModel.isItemCreated().observe(viewLifecycleOwner, { itemCreatedSuccessfully ->
+        viewModel.databaseEvent().observe(viewLifecycleOwner, databaseEventObserver())
+
+
+/*        viewModel.isItemCreated().observe(viewLifecycleOwner, { itemCreatedSuccessfully ->
             if (itemCreatedSuccessfully) {
                 findNavController().popBackStack()
                 dismiss()
@@ -104,15 +110,37 @@ class AddTimerFragment : BottomSheetDialogFragment() {
             }
 
             Toast.makeText(requireContext(), "failed to update timer", Toast.LENGTH_SHORT).show()
-        })
+        })*/
 
-        viewModel.errorMessage().observe(viewLifecycleOwner, { message ->
-            Toast.makeText(requireContext(), message, Toast.LENGTH_SHORT).show()
-        })
+        /* viewModel.errorMessage().observe(viewLifecycleOwner, { message ->
+             Toast.makeText(requireContext(), message, Toast.LENGTH_SHORT).show()
+         })*/
 
         timerItem = args.timerItem
 
         setUpTimerPicker()
+    }
+
+    private fun databaseEventObserver(): Observer<Resource<Int>> {
+        return Observer { result ->
+            when (result.status) {
+
+                Resource.Status.LOADING -> {
+                    //todo : show progress bar
+                }
+
+                Resource.Status.ERROR -> {
+                    val messageResId = result.messageResId ?: R.string.error_message
+                    Toast.makeText(requireContext(), messageResId, Toast.LENGTH_SHORT).show()
+                }
+
+                Resource.Status.SUCCESS -> {
+                    Toast.makeText(requireContext(), result.messageResId!!, Toast.LENGTH_SHORT).show()
+                    findNavController().popBackStack()
+                    dismiss()
+                }
+            }
+        }
     }
 
     private fun saveTimer() {
@@ -127,6 +155,7 @@ class AddTimerFragment : BottomSheetDialogFragment() {
     private fun setUpTimerPicker() {
         if (timerItem != null) {
             setUpTimerValue()
+            binding.createTimer.text = getString(R.string.update)
         }
 
         setUpHourPicker()

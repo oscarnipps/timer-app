@@ -6,7 +6,7 @@ import java.util.concurrent.TimeUnit
 
 object TimerUtil {
 
-    fun getFormattedTime(millis : Long) : String{
+    fun getTimeStringValue(millis : Long) : String{
 
         //convert the time to a readable format
         val formattedValue = String.format(
@@ -21,10 +21,6 @@ object TimerUtil {
     }
 
     fun getTimerValueInMilliseconds(timeString : String) : Long {
-       /* String time "12:30:00";
-        LocalTime localTime = LocalTime.parse(time);
-        int millis = localTime.toSecondOfDay() * 1000;*/
-
         val localTime = LocalTime.parse(timeString)
         val milliSeconds = localTime.toSecondOfDay() * 1000
         return milliSeconds.toLong()
