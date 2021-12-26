@@ -1,7 +1,8 @@
-package com.app.timerz.ui.home
+package com.app.timerz.ui.timerlist
 
 import android.view.View
 import android.widget.NumberPicker
+import androidx.core.os.bundleOf
 import androidx.navigation.Navigation
 import androidx.navigation.testing.TestNavHostController
 import androidx.test.core.app.ApplicationProvider
@@ -13,21 +14,24 @@ import androidx.test.espresso.action.GeneralSwipeAction
 import androidx.test.espresso.action.Press
 import androidx.test.espresso.action.Swipe
 import androidx.test.espresso.action.ViewActions.click
+import androidx.test.espresso.action.ViewActions.typeText
 import androidx.test.espresso.assertion.ViewAssertions.matches
+import androidx.test.espresso.matcher.ViewMatchers
 import androidx.test.espresso.matcher.ViewMatchers.*
 import com.app.timerz.R
+import com.app.timerz.ToastMatcher
+import com.app.timerz.data.local.database.entity.Timer
 import com.app.timerz.launchFragmentInHiltContainer
-import com.app.timerz.ui.timerlist.TimerListFragment
 import dagger.hilt.android.testing.HiltAndroidRule
 import dagger.hilt.android.testing.HiltAndroidTest
 import org.hamcrest.Matcher
+import org.junit.Assert.*
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
-import com.google.common.truth.Truth.*
 
 @HiltAndroidTest
-class HomeFragmentTest {
+class AddTimerFragmentTest{
 
     @get: Rule
     val hiltRule = HiltAndroidRule(this)
@@ -38,60 +42,64 @@ class HomeFragmentTest {
     }
 
     @Test
-    fun start_timer_button_with_default_picker_values_is_not_enabled() {
-        launchFragmentInHiltContainer {
-            HomeFragment().also {}
-        }
+    fun inputs_are_shown() {
+        val navController = TestNavHostController(ApplicationProvider.getApplicationContext())
 
-        onView(withId(R.id.start_timer_button)).perform(click()).check(matches(isNotEnabled()))
-    }
-
-
-    @Test
-    fun valid_picker_value_enables_button() {
-        launchFragmentInHiltContainer {
-            HomeFragment().also {}
-        }
-
-        onView(withId(R.id.seconds_picker))
-            .perform(
-                GeneralSwipeAction(
-                    Swipe.SLOW,
-                    GeneralLocation.TOP_CENTER,
-                    GeneralLocation.BOTTOM_CENTER,
-                    Press.FINGER
-                ),
-                setPickerValue(10))
-
-        onView(withId(R.id.minute_picker))
-            .perform(
-                GeneralSwipeAction(
-                    Swipe.SLOW,
-                    GeneralLocation.TOP_CENTER,
-                    GeneralLocation.BOTTOM_CENTER,
-                    Press.FINGER
-                ),
-                setPickerValue(30))
-
-        onView(withId(R.id.start_timer_button)).check(matches(isEnabled()))
-    }
-
-    @Test
-    fun navigate_to_active_timer_fragment_when_start_timer_button_is_clicked() {
-        val navController =
-            TestNavHostController(ApplicationProvider.getApplicationContext())
+        val arguments = bundleOf(Pair("timerItem", Timer(1,"workout","00:00:30","","")))
 
         launchFragmentInHiltContainer {
-            HomeFragment().also { fragment ->
+            AddTimerFragment().also { fragment ->
                 fragment.viewLifecycleOwnerLiveData.observeForever { viewLifecycleOwner ->
+
                     if (viewLifecycleOwner != null) {
+                        fragment.arguments = arguments
+
                         navController.setGraph(R.navigation.main_nav_graph)
+
+                        navController.setCurrentDestination(R.id.addTimerFragment)
+
                         Navigation.setViewNavController(fragment.requireView(), navController)
                     }
                 }
             }
         }
 
+        onView(withId(R.id.timer_title)).check(matches(isDisplayed()))
+
+        onView(withId(R.id.hour_picker)).check(matches(isDisplayed()))
+
+        onView(withId(R.id.minute_picker)).check(matches(isDisplayed()))
+
+        onView(withId(R.id.seconds_picker)).check(matches(isDisplayed()))
+    }
+
+    @Test
+    fun create_timer_button_clicked_saves_with_toast_message() {
+        val navController = TestNavHostController(ApplicationProvider.getApplicationContext())
+
+        val timerItem = Timer(1,"cardio workout","00:20:30","","")
+
+        val arguments = bundleOf(Pair("timerItem", null))
+
+        launchFragmentInHiltContainer {
+            AddTimerFragment().also { fragment ->
+                fragment.viewLifecycleOwnerLiveData.observeForever { viewLifecycleOwner ->
+
+                    if (viewLifecycleOwner != null) {
+                        fragment.arguments = arguments
+
+                        navController.setGraph(R.navigation.main_nav_graph)
+
+                        navController.setCurrentDestination(R.id.addTimerFragment)
+
+                        Navigation.setViewNavController(fragment.requireView(), navController)
+                    }
+                }
+            }
+        }
+
+        onView(withId(R.id.timer_title)).perform(typeText("cardio workout"))
+
         onView(withId(R.id.seconds_picker))
             .perform(
                 GeneralSwipeAction(
@@ -113,17 +121,21 @@ class HomeFragmentTest {
                 ),
                 setPickerValue(30)
             )
+/*        onView(withId(R.id.hour_picker)).perform(setPickerValue(0))
 
-        onView(withId(R.id.start_timer_button)).perform(click())
+        onView(withId(R.id.minute_picker)).perform(setPickerValue(20))
 
-        assertThat(navController.currentDestination?.id).isEqualTo(R.id.activeTimerFragment)
+        onView(withId(R.id.seconds_picker)).perform(setPickerValue(30))*/
+
+        onView(withId(R.id.create_timer)).perform(click())
+
+        onView(withText(R.string.timer_creation_success)).inRoot(ToastMatcher()).check(matches(isDisplayed()))
     }
-
 
     private fun setPickerValue(value: Int): ViewAction {
         return object : ViewAction {
             override fun getConstraints(): Matcher<View> {
-                return isAssignableFrom(NumberPicker::class.java)
+                return ViewMatchers.isAssignableFrom(NumberPicker::class.java)
             }
 
             override fun getDescription(): String {
@@ -137,6 +149,4 @@ class HomeFragmentTest {
 
         }
     }
-
-
 }
