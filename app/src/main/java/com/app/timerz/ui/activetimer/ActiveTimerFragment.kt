@@ -56,45 +56,12 @@ class ActiveTimerFragment : Fragment(), ServiceConnection {
             putExtra("timer-value", args.timerDuration)
             putExtra("timer-title", args.timerTitle)
             action = Constants.ACTION_START_TIMER
-            //action = getTimerServiceAction()
         }
 
         requireActivity().startService(serviceIntent)
 
         requireActivity().bindService(serviceIntent, this, Context.BIND_AUTO_CREATE)
     }
-
-    private fun getTimerServiceAction(): String {
-        //val initialTimeValue = timerService?.initialSetTimerValue
-
-        //Timber.d("initial value : ${timerService?.initialSetTimerValue}")
-        Timber.d("initial value : $timerInitialValue")
-
-
-        if (timerInitialValue == null || args.timerDuration == timerInitialValue) {
-            Timber.d("returning action : ${Constants.ACTION_START_TIMER}")
-            return Constants.ACTION_START_TIMER
-        }
-
-        if (args.timerDuration == Constants.ELAPSED_TIME_VALUE) {
-            Timber.d("returning action : ${Constants.ACTION_FINISHED_TIMER}")
-            return Constants.ACTION_FINISHED_TIMER
-        }
-
-        Timber.d("returning action : ${Constants.ACTION_RESUME_TIMER}")
-        return Constants.ACTION_RESUME_TIMER
-
-        /* return when (args.timerDuration) {
-             initialTimeValue -> Constants.ACTION_START_TIMER
-
-             Constants.ELAPSED_TIME_VALUE -> Constants.ACTION_FINISHED_TIMER
-
-             else -> {
-                 Constants.ACTION_RESUME_TIMER
-             }
-         }*/
-    }
-
 
     private fun updateTimerButtonUi(color: Int, text: CharSequence) {
         binding.pause.backgroundTintList = ContextCompat.getColorStateList(requireActivity(), color)

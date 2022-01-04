@@ -63,6 +63,7 @@ class TimerService : Service() {
         Timber.d("timer title : $timerTitle")
 
         if (initialSetTimerValue == null) {
+
             initialSetTimerValue = timerValue
 
             startTimer(TimerUtil.getTimerValueInMilliseconds(timerValue!!))
@@ -102,89 +103,15 @@ class TimerService : Service() {
         countDownTimer = getCountDownTimer(timerDurationMilliSeconds)
 
         countDownTimer?.start()
-
-        /*if (countDownTimer == null) {
-            Timber.d("setting up new timer")
-
-            countDownTimer = getCountDownTimer(timerDurationMilliSeconds)
-
-            if (isTimerPaused) {
-                return
-            }
-        }
-        countDownTimer?.start()*/
     }
 
     private fun showFinishedTimer() {
         timerValueLiveData.value = initialSetTimerValue
         isTimerFinished = true
     }
-/*
-    private fun startUpTimer(intent: Intent?) {
-        timerValue = intent?.extras?.getString("timer-value")
-
-        //Timber.d("initial set timer value (before) : $initialSetTimerValue")
-        //initialSetTimerValue = initialSetTimerValue ?: timerValue
-        //Timber.d("initial set timer value (after) : $initialSetTimerValue")
-        Timber.d("initial set timer value : $initialSetTimerValue")
-        timerTitle = intent?.extras?.getString("timer-title")
-
-        Timber.d("timer value passed to service : $timerValue")
-
-        Timber.d("timer title passed to service : $timerTitle")
-
-        when {
-            initialSetTimerValue == null -> {
-                initialSetTimerValue = timerValue
-                setUpTimer(TimerUtil.getTimerValueInMilliseconds(timerValue!!))
-            }
-            timerValue == Constants.ELAPSED_TIME_VALUE -> {
-                showFinishedTimer()
-            }
-            else -> {
-                resumeTimer()
-            }
-        }
-
-        //setUpTimer(TimerUtil.getTimerValueInMilliseconds(timerValue!!))
-
-        *//* if (timerValue != "00:00:00") {
-             Timber.d("setting up new timer")
-             setUpTimer(TimerUtil.getTimerValueInMilliseconds(timerValue!!))
-         }*//*
-    }*/
 
     override fun onBind(intent: Intent?): IBinder {
         return binder
-    }
-
-    private fun setUpTimer(timerDurationMilliSeconds: Long) {
-      /*  Timber.d("timer paused : $isTimerPaused")
-
-        Timber.d("countdown timer : $countDownTimer")
-
-        showTimerNotification(timerValue!!, timerTitle!!, Constants.TIMER_RESUMED_STATE)
-
-        if (countDownTimer == null) {
-            Timber.d("setting up new timer")
-
-            countDownTimer = getCountDownTimer(timerDurationMilliSeconds)
-
-            if (isTimerPaused) {
-                return
-            }
-        }
-        countDownTimer?.start()*/
-
-        Timber.d("timer paused : $isTimerPaused")
-
-        Timber.d("countdown timer : $countDownTimer")
-
-        showTimerNotification(timerValue!!, timerTitle!!, Constants.TIMER_RESUMED_STATE)
-
-        countDownTimer = getCountDownTimer(timerDurationMilliSeconds)
-
-        countDownTimer?.start()
     }
 
     private fun getCountDownTimer(timerDurationMilliSeconds: Long) =
@@ -225,7 +152,6 @@ class TimerService : Service() {
         }
 
     private fun showTimerNotification(timerValue: String, title: String, flag: String) {
-
         startForeground(1, NotificationUtil.getNotification(
             this,
             timerValue,
