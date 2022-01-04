@@ -20,7 +20,7 @@ object TimerUtil {
         return formattedValue
     }
 
-    fun getTimerValueInMilliseconds(timeString : String) : Long {
+    fun getTimerValueInMilliseconds(timeString : String?) : Long {
         val localTime = LocalTime.parse(timeString)
         val milliSeconds = localTime.toSecondOfDay() * 1000
         return milliSeconds.toLong()

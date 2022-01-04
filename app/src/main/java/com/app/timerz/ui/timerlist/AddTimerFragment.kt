@@ -91,31 +91,6 @@ class AddTimerFragment : BottomSheetDialogFragment() {
 
         viewModel.databaseEvent().observe(viewLifecycleOwner, databaseEventObserver())
 
-
-/*        viewModel.isItemCreated().observe(viewLifecycleOwner, { itemCreatedSuccessfully ->
-            if (itemCreatedSuccessfully) {
-                findNavController().popBackStack()
-                dismiss()
-                return@observe
-            }
-
-            Toast.makeText(requireContext(), "failed to create timer", Toast.LENGTH_SHORT).show()
-        })
-
-        viewModel.isItemUpdated().observe(viewLifecycleOwner, { itemUpdatedSuccessfully ->
-            if (itemUpdatedSuccessfully) {
-                findNavController().popBackStack()
-                dismiss()
-                return@observe
-            }
-
-            Toast.makeText(requireContext(), "failed to update timer", Toast.LENGTH_SHORT).show()
-        })*/
-
-        /* viewModel.errorMessage().observe(viewLifecycleOwner, { message ->
-             Toast.makeText(requireContext(), message, Toast.LENGTH_SHORT).show()
-         })*/
-
         timerItem = args.timerItem
 
         setUpTimerPicker()

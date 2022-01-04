@@ -19,6 +19,7 @@ import com.app.timerz.data.Constants
 import com.app.timerz.data.TimerService
 import com.app.timerz.databinding.FragmentActiveTimerBinding
 import com.app.timerz.util.TimerUtil
+import kotlinx.android.synthetic.main.fragment_active_timer.*
 import timber.log.Timber
 
 class ActiveTimerFragment : Fragment(), ServiceConnection {
@@ -26,6 +27,7 @@ class ActiveTimerFragment : Fragment(), ServiceConnection {
     private lateinit var binding: FragmentActiveTimerBinding
     private val args: ActiveTimerFragmentArgs by navArgs()
     private var timerService: TimerService? = null
+    private var timerInitialValue: String? = null
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -54,11 +56,43 @@ class ActiveTimerFragment : Fragment(), ServiceConnection {
             putExtra("timer-value", args.timerDuration)
             putExtra("timer-title", args.timerTitle)
             action = Constants.ACTION_START_TIMER
+            //action = getTimerServiceAction()
         }
 
         requireActivity().startService(serviceIntent)
 
         requireActivity().bindService(serviceIntent, this, Context.BIND_AUTO_CREATE)
+    }
+
+    private fun getTimerServiceAction(): String {
+        //val initialTimeValue = timerService?.initialSetTimerValue
+
+        //Timber.d("initial value : ${timerService?.initialSetTimerValue}")
+        Timber.d("initial value : $timerInitialValue")
+
+
+        if (timerInitialValue == null || args.timerDuration == timerInitialValue) {
+            Timber.d("returning action : ${Constants.ACTION_START_TIMER}")
+            return Constants.ACTION_START_TIMER
+        }
+
+        if (args.timerDuration == Constants.ELAPSED_TIME_VALUE) {
+            Timber.d("returning action : ${Constants.ACTION_FINISHED_TIMER}")
+            return Constants.ACTION_FINISHED_TIMER
+        }
+
+        Timber.d("returning action : ${Constants.ACTION_RESUME_TIMER}")
+        return Constants.ACTION_RESUME_TIMER
+
+        /* return when (args.timerDuration) {
+             initialTimeValue -> Constants.ACTION_START_TIMER
+
+             Constants.ELAPSED_TIME_VALUE -> Constants.ACTION_FINISHED_TIMER
+
+             else -> {
+                 Constants.ACTION_RESUME_TIMER
+             }
+         }*/
     }
 
 
@@ -74,7 +108,9 @@ class ActiveTimerFragment : Fragment(), ServiceConnection {
 
     private fun restartTimer() {
         startTimerService()
-        binding.restart.visibility = View.GONE
+
+        binding.finishedTimerControlGroup.visibility = View.GONE
+
         binding.activeTimerControlGroup.visibility = View.VISIBLE
     }
 
@@ -97,12 +133,23 @@ class ActiveTimerFragment : Fragment(), ServiceConnection {
         super.onDestroy()
 
         Timber.d("onDestroy")
+    }
 
-            requireActivity().unbindService(this)
+    override fun onPause() {
+        super.onPause()
+        Timber.d("onPause")
+        requireActivity().unbindService(this)
+
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
+        findNavController().previousBackStackEntry?.savedStateHandle?.getLiveData<String>("initial-time-duration")
+            ?.observe(viewLifecycleOwner, { result ->
+                timerInitialValue = result
+                Timber.d("initial value from saved state : $result")
+            })
 
         binding.timerTitle.text = args.timerTitle
 
@@ -111,6 +158,8 @@ class ActiveTimerFragment : Fragment(), ServiceConnection {
         binding.pause.setOnClickListener { pauseTimer() }
 
         binding.restart.setOnClickListener { restartTimer() }
+
+        binding.dismiss.setOnClickListener { cancelTimer() }
     }
 
     override fun onServiceConnected(component: ComponentName?, binder: IBinder?) {
@@ -139,7 +188,7 @@ class ActiveTimerFragment : Fragment(), ServiceConnection {
             if (timerValue == "00:00:00") {
                 binding.timerValue.text = args.timerDuration
 
-                binding.restart.visibility = View.VISIBLE
+                binding.finishedTimerControlGroup.visibility = View.VISIBLE
 
                 binding.activeTimerControlGroup.visibility = View.GONE
 
@@ -160,7 +209,7 @@ class ActiveTimerFragment : Fragment(), ServiceConnection {
     private fun updateTimerProgressBar(timerValue: String) {
         val time = TimerUtil.getTimerValueInMilliseconds(timerValue).toFloat()
 
-        val total = TimerUtil.getTimerValueInMilliseconds(args.timerDuration)
+        val total = TimerUtil.getTimerValueInMilliseconds(timerService?.initialSetTimerValue)
 
         binding.timerProgress.progress = (time / total * 100).toInt()
     }

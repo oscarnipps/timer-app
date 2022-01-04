@@ -1,8 +1,8 @@
 package com.app.timerz.data
 
-import android.app.Notification
 import android.app.Service
 import android.content.Intent
+import android.media.MediaPlayer
 import android.os.Binder
 import android.os.CountDownTimer
 import android.os.IBinder
@@ -10,6 +10,7 @@ import androidx.lifecycle.MutableLiveData
 import com.app.timerz.util.NotificationUtil
 import timber.log.Timber
 import com.app.timerz.util.TimerUtil
+import android.provider.Settings
 
 
 class TimerService : Service() {
@@ -19,22 +20,26 @@ class TimerService : Service() {
     private var timerMilliSecondsRemaining: Long? = null
     private var timerTitle: String? = null
     private var timerValue: String? = null
-    private lateinit var notification: Notification
+    var initialSetTimerValue: String? = null
     val timerValueLiveData: MutableLiveData<String> = MutableLiveData()
     var isTimerPaused = false
+    var isTimerFinished = false
+    var timerAlertPlayer: MediaPlayer? = null
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
         Timber.d("onStartCommand called")
 
-        handleIntentAction(intent)
+        handleIntent(intent)
 
         return START_STICKY
     }
 
-    private fun handleIntentAction(intent: Intent?) {
+    private fun handleIntent(intent: Intent?) {
         val action = intent?.action
 
         Timber.d("intent action : $action")
+
+        Timber.d("initial set timer value : $initialSetTimerValue")
 
         when (action) {
             Constants.ACTION_PAUSE_TIMER -> pauseTimer()
@@ -43,34 +48,63 @@ class TimerService : Service() {
 
             Constants.ACTION_CANCEL_TIMER -> cancelTimer()
 
-            else -> {
-                timerValue = intent?.extras?.getString("timer-value")
-
-                timerTitle = intent?.extras?.getString("timer-title")
-
-                Timber.d("timer value passed to service : $timerValue")
-
-                Timber.d("timer title passed to service : $timerTitle")
-
-                setUpTimer(TimerUtil.getTimerValueInMilliseconds(timerValue!!))
-            }
-
+            Constants.ACTION_START_TIMER -> setTimer(intent)
         }
 
     }
 
-    override fun onBind(intent: Intent?): IBinder {
-        return binder
+    private fun setTimer(intent: Intent?) {
+        timerTitle = intent?.extras?.getString("timer-title")
+
+        timerValue = intent?.extras?.getString("timer-value")
+
+        Timber.d("timer value : $timerValue")
+
+        Timber.d("timer title : $timerTitle")
+
+        if (initialSetTimerValue == null) {
+            initialSetTimerValue = timerValue
+
+            startTimer(TimerUtil.getTimerValueInMilliseconds(timerValue!!))
+
+            return
+        }
+
+        if (initialSetTimerValue == Constants.ELAPSED_TIME_VALUE) {
+           showFinishedTimer()
+            return
+        }
+
+        setUpActiveTimer()
     }
 
-    private fun setUpTimer(timerDurationMilliSeconds: Long) {
+    private fun setUpActiveTimer() {
+        Timber.d("setting up active timer")
+
+        if (!isTimerPaused) {
+            clearTimer()
+
+            startTimer(TimerUtil.getTimerValueInMilliseconds(timerValue))
+
+            return
+        }
+
+        timerValueLiveData.value = timerValue
+    }
+
+    private fun startTimer(timerDurationMilliSeconds: Long) {
         Timber.d("timer paused : $isTimerPaused")
 
         Timber.d("countdown timer : $countDownTimer")
 
-        showTimerNotification(timerValue!!, timerTitle!!, Constants.FLAG_RESUME_TIMER)
+        showTimerNotification(timerValue!!, timerTitle!!, Constants.TIMER_RESUMED_STATE)
 
-        if (countDownTimer == null) {
+        countDownTimer = getCountDownTimer(timerDurationMilliSeconds)
+
+        countDownTimer?.start()
+
+        /*if (countDownTimer == null) {
+            Timber.d("setting up new timer")
 
             countDownTimer = getCountDownTimer(timerDurationMilliSeconds)
 
@@ -78,6 +112,78 @@ class TimerService : Service() {
                 return
             }
         }
+        countDownTimer?.start()*/
+    }
+
+    private fun showFinishedTimer() {
+        timerValueLiveData.value = initialSetTimerValue
+        isTimerFinished = true
+    }
+/*
+    private fun startUpTimer(intent: Intent?) {
+        timerValue = intent?.extras?.getString("timer-value")
+
+        //Timber.d("initial set timer value (before) : $initialSetTimerValue")
+        //initialSetTimerValue = initialSetTimerValue ?: timerValue
+        //Timber.d("initial set timer value (after) : $initialSetTimerValue")
+        Timber.d("initial set timer value : $initialSetTimerValue")
+        timerTitle = intent?.extras?.getString("timer-title")
+
+        Timber.d("timer value passed to service : $timerValue")
+
+        Timber.d("timer title passed to service : $timerTitle")
+
+        when {
+            initialSetTimerValue == null -> {
+                initialSetTimerValue = timerValue
+                setUpTimer(TimerUtil.getTimerValueInMilliseconds(timerValue!!))
+            }
+            timerValue == Constants.ELAPSED_TIME_VALUE -> {
+                showFinishedTimer()
+            }
+            else -> {
+                resumeTimer()
+            }
+        }
+
+        //setUpTimer(TimerUtil.getTimerValueInMilliseconds(timerValue!!))
+
+        *//* if (timerValue != "00:00:00") {
+             Timber.d("setting up new timer")
+             setUpTimer(TimerUtil.getTimerValueInMilliseconds(timerValue!!))
+         }*//*
+    }*/
+
+    override fun onBind(intent: Intent?): IBinder {
+        return binder
+    }
+
+    private fun setUpTimer(timerDurationMilliSeconds: Long) {
+      /*  Timber.d("timer paused : $isTimerPaused")
+
+        Timber.d("countdown timer : $countDownTimer")
+
+        showTimerNotification(timerValue!!, timerTitle!!, Constants.TIMER_RESUMED_STATE)
+
+        if (countDownTimer == null) {
+            Timber.d("setting up new timer")
+
+            countDownTimer = getCountDownTimer(timerDurationMilliSeconds)
+
+            if (isTimerPaused) {
+                return
+            }
+        }
+        countDownTimer?.start()*/
+
+        Timber.d("timer paused : $isTimerPaused")
+
+        Timber.d("countdown timer : $countDownTimer")
+
+        showTimerNotification(timerValue!!, timerTitle!!, Constants.TIMER_RESUMED_STATE)
+
+        countDownTimer = getCountDownTimer(timerDurationMilliSeconds)
+
         countDownTimer?.start()
     }
 
@@ -91,34 +197,41 @@ class TimerService : Service() {
 
                 timerMilliSecondsRemaining = millisUntilFinished
 
-                Timber.d("onTick : $formattedValue")
-
                 NotificationUtil.updateNotification(
                     this@TimerService,
                     formattedValue,
                     timerTitle!!,
-                    Constants.FLAG_PAUSE_TIMER
+                    Constants.TIMER_RESUMED_STATE
                 )
             }
 
             override fun onFinish() {
+                Timber.d("onFinish : timer finished")
                 countDownTimer = null
 
                 isTimerPaused = false
 
-                stopSelf()
+                playTimerAlertSound()
+
+                timerValueLiveData.value = initialSetTimerValue
+
+                NotificationUtil.updateNotification(
+                    this@TimerService,
+                    TimerUtil.getTimeStringValue(timerMilliSecondsRemaining!!),
+                    timerTitle!!,
+                    Constants.TIMER_FINISHED_STATE
+                )
             }
         }
 
     private fun showTimerNotification(timerValue: String, title: String, flag: String) {
-        notification = NotificationUtil.getNotification(
+
+        startForeground(1, NotificationUtil.getNotification(
             this,
             timerValue,
             title,
             flag
-        )
-
-        startForeground(1, notification)
+        ))
     }
 
     override fun onUnbind(intent: Intent?): Boolean {
@@ -126,35 +239,49 @@ class TimerService : Service() {
         return super.onUnbind(intent)
     }
 
-    fun cancelTimer() {
-        countDownTimer?.cancel()
+    private fun playTimerAlertSound() {
+        timerAlertPlayer = MediaPlayer.create(this, Settings.System.DEFAULT_ALARM_ALERT_URI)
+        timerAlertPlayer?.start()
+    }
 
-        countDownTimer = null
+    fun cancelTimer() {
+        clearTimer()
 
         NotificationUtil.cancelNotification(1, this)
 
+        timerAlertPlayer?.release()
+
+        timerAlertPlayer = null
+
         stopSelf()
+
     }
 
     fun pauseTimer() {
-        countDownTimer?.cancel()
-
-        countDownTimer = null
+        clearTimer()
 
         NotificationUtil.updateNotification(
             this,
             TimerUtil.getTimeStringValue(timerMilliSecondsRemaining!!),
             timerTitle!!,
-            Constants.FLAG_RESUME_TIMER
+            Constants.TIMER_PAUSED_STATE
         )
 
         isTimerPaused = true
     }
 
+    private fun clearTimer() {
+        countDownTimer?.cancel()
+
+        countDownTimer = null
+    }
+
     fun resumeTimer() {
+        Timber.d("timer service resumed")
+
         isTimerPaused = false
 
-        setUpTimer(timerMilliSecondsRemaining!!)
+        startTimer(timerMilliSecondsRemaining!!)
     }
 
     override fun onDestroy() {

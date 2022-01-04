@@ -28,11 +28,11 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginBottom="32dp"
-            android:textSize="18sp"
             android:textAlignment="center"
+            android:textSize="18sp"
+            android:textStyle="bold"
             app:layout_constraintBottom_toTopOf="@+id/timer_progress"
             app:layout_constraintEnd_toEndOf="parent"
-            android:textStyle="bold"
             app:layout_constraintStart_toStartOf="parent"
             tools:text="Plank Workout " />
 
@@ -73,14 +73,28 @@
             app:layout_constraintTop_toBottomOf="@+id/timer_progress" />
 
         <com.google.android.material.button.MaterialButton
-            android:visibility="gone"
             android:id="@+id/restart"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/restart"
+            android:visibility="visible"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toStartOf="@+id/dismiss"
+            app:layout_constraintHorizontal_bias="0.5"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/timer_progress"
+            app:layout_constraintVertical_bias="0.404" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/dismiss"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/dismiss"
+            android:visibility="visible"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintHorizontal_bias="0.5"
+            app:layout_constraintStart_toEndOf="@+id/restart"
             app:layout_constraintTop_toBottomOf="@+id/timer_progress"
             app:layout_constraintVertical_bias="0.404" />
 
@@ -88,7 +102,16 @@
             android:id="@+id/active_timer_control_group"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            app:constraint_referenced_ids="pause,cancel" />
+            app:constraint_referenced_ids="pause,cancel"
+            />
+
+        <androidx.constraintlayout.widget.Group
+            android:visibility="gone"
+            android:id="@+id/finished_timer_control_group"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:constraint_referenced_ids="restart,dismiss"
+            />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>

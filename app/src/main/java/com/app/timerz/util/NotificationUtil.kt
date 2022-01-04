@@ -16,6 +16,7 @@ import androidx.navigation.NavDeepLinkBuilder
 import com.app.timerz.R
 import com.app.timerz.data.Constants
 import com.app.timerz.data.TimerService
+import timber.log.Timber
 
 object NotificationUtil {
 
@@ -23,7 +24,7 @@ object NotificationUtil {
         context: Context,
         timeValue: String,
         title: String,
-        timerControlFlag: String
+        timerState: String,
     ): Notification {
         val notificationManager =
             context.getSystemService(NOTIFICATION_SERVICE) as NotificationManager
@@ -44,32 +45,80 @@ object NotificationUtil {
         val notificationBuilder = NotificationCompat.Builder(context, "timer-notification-channel")
             .setContentTitle(title)
             .setSmallIcon(R.drawable.ic_add)
-            .setContentText("time remaining : $timeValue")
+            .setContentText(getNotificationContentText(timeValue))
             .setOnlyAlertOnce(true)
             .setAutoCancel(true)
             .setOngoing(true)
             .setColorized(true)
-            .setContentIntent(getContentPendingIntent(context, timeValue,title))
+            .setContentIntent(getContentPendingIntent(context, timeValue, title))
             .setColor(ContextCompat.getColor(context, R.color.color_button_enabled))
             .setPriority(NotificationCompat.PRIORITY_DEFAULT)
 
-        setUpNotificationActions(notificationBuilder, context, timerControlFlag)
+        setUpNotificationActions(notificationBuilder, context, timerState)
 
         return notificationBuilder.build()
     }
 
+    private fun getNotificationContentText(timeValue: String) : String {
+        if (timeValue == "00:00:00") {
+            return "Time Elapsed : $timeValue "
+        }
+
+        return "Time Remaining : $timeValue"
+    }
+
+
     private fun setUpNotificationActions(
         notificationBuilder: NotificationCompat.Builder,
         context: Context,
-        flag: String
+        timerState: String,
     ) {
-        notificationBuilder.addAction(
+
+        when (timerState) {
+            Constants.TIMER_PAUSED_STATE -> {
+                notificationBuilder.addAction(
+                    R.drawable.ic_add,
+                    context.getString(R.string.cancel),
+                    getCancelPendingIntent(context)
+                )
+
+                notificationBuilder.addAction(
+                    R.drawable.ic_add,
+                    context.getString(R.string.resume),
+                    getResumePendingIntent(context)
+                )
+            }
+
+            Constants.TIMER_RESUMED_STATE -> {
+                notificationBuilder.addAction(
+                    R.drawable.ic_add,
+                    context.getString(R.string.cancel),
+                    getCancelPendingIntent(context)
+                )
+
+                notificationBuilder.addAction(
+                    R.drawable.ic_add,
+                    context.getString(R.string.pause),
+                    getPausePendingIntent(context)
+                )
+            }
+
+            Constants.TIMER_FINISHED_STATE -> {
+                notificationBuilder.addAction(
+                    R.drawable.ic_add,
+                    context.getString(R.string.cancel),
+                    getCancelPendingIntent(context)
+                )
+            }
+        }
+
+       /* notificationBuilder.addAction(
             R.drawable.ic_add,
             context.getString(R.string.cancel),
             getCancelPendingIntent(context)
         )
 
-        if (flag == Constants.FLAG_RESUME_TIMER) {
+        if (timerState == Constants.TIMER_RESUMED_STATE) {
             notificationBuilder.addAction(
                 R.drawable.ic_add,
                 context.getString(R.string.resume),
@@ -83,22 +132,23 @@ object NotificationUtil {
             R.drawable.ic_add,
             context.getString(R.string.pause),
             getPausePendingIntent(context)
-        )
+        )*/
     }
 
     fun updateNotification(
         context: Context,
         timeValue: String,
         title: String,
-        timerControlFlag: String
+        timerState: String,
     ) {
         val notificationManager =
             context.getSystemService(NOTIFICATION_SERVICE) as NotificationManager
 
-        notificationManager.notify(1, getNotification(context, timeValue, title, timerControlFlag))
+        notificationManager.notify(1, getNotification(context, timeValue, title, timerState))
     }
 
     fun cancelNotification(id: Int, context: Context) {
+        Timber.d("notification cancelled")
         val notificationManager =
             context.getSystemService(NOTIFICATION_SERVICE) as NotificationManager
 
@@ -118,7 +168,11 @@ object NotificationUtil {
         )
     }
 
-    private fun getContentPendingIntent(context: Context, value: String, title: String): PendingIntent {
+    private fun getContentPendingIntent(
+        context: Context,
+        value: String,
+        title: String,
+    ): PendingIntent {
 
         return NavDeepLinkBuilder(context)
             .setGraph(R.navigation.main_nav_graph)

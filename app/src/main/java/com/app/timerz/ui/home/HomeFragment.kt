@@ -77,6 +77,8 @@ class HomeFragment : Fragment() {
             val action =
                 HomeFragmentDirections.actionHomeFragmentToActiveTimerFragment(getTimerDuration(),"New Timer")
 
+            findNavController().currentBackStackEntry?.savedStateHandle?.set("initial-time-duration" , getTimerDuration())
+
             findNavController().navigate(action)
         }
 

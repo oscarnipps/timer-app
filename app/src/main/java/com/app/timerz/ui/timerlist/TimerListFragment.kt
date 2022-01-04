@@ -16,17 +16,16 @@ import com.app.timerz.databinding.FragmentTimerListBinding
 import dagger.hilt.android.AndroidEntryPoint
 import timber.log.Timber
 import android.app.ActivityManager
+import android.media.MediaPlayer
+import android.media.audiofx.BassBoost
 import android.widget.Toast
 
 import androidx.core.content.ContextCompat.getSystemService
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
 import androidx.lifecycle.Observer
-import androidx.navigation.findNavController
 import com.app.timerz.data.Resource
-import io.reactivex.android.schedulers.AndroidSchedulers
-import io.reactivex.disposables.CompositeDisposable
-import io.reactivex.schedulers.Schedulers
+import android.media.RingtoneManager
 
 
 @AndroidEntryPoint
@@ -49,7 +48,7 @@ class TimerListFragment : Fragment(), TimerListAdapter.TimerItemListener {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        val navBackStackEntry = findNavController().getBackStackEntry(R.id.timerListFragment)
+       /* val navBackStackEntry = findNavController().getBackStackEntry(R.id.timerListFragment)
 
         val observer = LifecycleEventObserver { source, event ->
             if (event == Lifecycle.Event.ON_RESUME && navBackStackEntry.savedStateHandle.contains("key")) {
@@ -65,7 +64,7 @@ class TimerListFragment : Fragment(), TimerListAdapter.TimerItemListener {
             if (event == Lifecycle.Event.ON_DESTROY) {
                 navBackStackEntry.lifecycle.removeObserver(observer)
             }
-        })
+        })*/
 
         timerAdapter = TimerListAdapter(this)
 
@@ -81,6 +80,8 @@ class TimerListFragment : Fragment(), TimerListAdapter.TimerItemListener {
                 TimerListFragmentDirections.actionTimerListFragmentToAddTimerFragment(null)
 
             findNavController().navigate(action)
+
+            //playNotificationSound()
         }
 
         binding.deleteTimers.setOnClickListener {

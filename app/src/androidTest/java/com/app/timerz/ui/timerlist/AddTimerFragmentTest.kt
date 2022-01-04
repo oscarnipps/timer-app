@@ -25,13 +25,12 @@ import com.app.timerz.launchFragmentInHiltContainer
 import dagger.hilt.android.testing.HiltAndroidRule
 import dagger.hilt.android.testing.HiltAndroidTest
 import org.hamcrest.Matcher
-import org.junit.Assert.*
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
 
 @HiltAndroidTest
-class AddTimerFragmentTest{
+class AddTimerFragmentTest {
 
     @get: Rule
     val hiltRule = HiltAndroidRule(this)
@@ -45,7 +44,7 @@ class AddTimerFragmentTest{
     fun inputs_are_shown() {
         val navController = TestNavHostController(ApplicationProvider.getApplicationContext())
 
-        val arguments = bundleOf(Pair("timerItem", Timer(1,"workout","00:00:30","","")))
+        val arguments = bundleOf(Pair("timerItem", Timer(1, "workout", "00:00:30", "", "")))
 
         launchFragmentInHiltContainer {
             AddTimerFragment().also { fragment ->
@@ -77,7 +76,7 @@ class AddTimerFragmentTest{
     fun create_timer_button_clicked_saves_with_toast_message() {
         val navController = TestNavHostController(ApplicationProvider.getApplicationContext())
 
-        val timerItem = Timer(1,"cardio workout","00:20:30","","")
+        val timerItem = Timer(1, "cardio workout", "00:20:30", "", "")
 
         val arguments = bundleOf(Pair("timerItem", null))
 
@@ -121,15 +120,11 @@ class AddTimerFragmentTest{
                 ),
                 setPickerValue(30)
             )
-/*        onView(withId(R.id.hour_picker)).perform(setPickerValue(0))
-
-        onView(withId(R.id.minute_picker)).perform(setPickerValue(20))
-
-        onView(withId(R.id.seconds_picker)).perform(setPickerValue(30))*/
 
         onView(withId(R.id.create_timer)).perform(click())
 
-        onView(withText(R.string.timer_creation_success)).inRoot(ToastMatcher()).check(matches(isDisplayed()))
+        onView(withText(R.string.timer_creation_success)).inRoot(ToastMatcher())
+            .check(matches(isDisplayed()))
     }
 
     private fun setPickerValue(value: Int): ViewAction {
