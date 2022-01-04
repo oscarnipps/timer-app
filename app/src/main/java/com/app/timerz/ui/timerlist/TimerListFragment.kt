@@ -48,24 +48,6 @@ class TimerListFragment : Fragment(), TimerListAdapter.TimerItemListener {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-       /* val navBackStackEntry = findNavController().getBackStackEntry(R.id.timerListFragment)
-
-        val observer = LifecycleEventObserver { source, event ->
-            if (event == Lifecycle.Event.ON_RESUME && navBackStackEntry.savedStateHandle.contains("key")) {
-                val result = navBackStackEntry.savedStateHandle.get<Int>("key")
-                Timber.d("create timer with row count : $result")
-                Toast.makeText(requireContext(), "created : $result", Toast.LENGTH_SHORT).show()
-            }
-        }
-
-        navBackStackEntry.lifecycle.addObserver(observer)
-
-        viewLifecycleOwner.lifecycle.addObserver(LifecycleEventObserver { source, event ->
-            if (event == Lifecycle.Event.ON_DESTROY) {
-                navBackStackEntry.lifecycle.removeObserver(observer)
-            }
-        })*/
-
         timerAdapter = TimerListAdapter(this)
 
         recyclerView = binding.timerListRecyclerview
@@ -80,8 +62,6 @@ class TimerListFragment : Fragment(), TimerListAdapter.TimerItemListener {
                 TimerListFragmentDirections.actionTimerListFragmentToAddTimerFragment(null)
 
             findNavController().navigate(action)
-
-            //playNotificationSound()
         }
 
         binding.deleteTimers.setOnClickListener {

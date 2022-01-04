@@ -71,7 +71,7 @@ class TimerService : Service() {
             return
         }
 
-        if (initialSetTimerValue == Constants.ELAPSED_TIME_VALUE) {
+        if (timerValue == Constants.ELAPSED_TIME_VALUE) {
            showFinishedTimer()
             return
         }
@@ -106,8 +106,9 @@ class TimerService : Service() {
     }
 
     private fun showFinishedTimer() {
-        timerValueLiveData.value = initialSetTimerValue
+        Timber.d("show finished ")
         isTimerFinished = true
+        timerValueLiveData.value = initialSetTimerValue
     }
 
     override fun onBind(intent: Intent?): IBinder {
@@ -138,6 +139,8 @@ class TimerService : Service() {
 
                 isTimerPaused = false
 
+                isTimerFinished = true
+
                 playTimerAlertSound()
 
                 timerValueLiveData.value = initialSetTimerValue
@@ -166,8 +169,10 @@ class TimerService : Service() {
     }
 
     private fun playTimerAlertSound() {
-        timerAlertPlayer = MediaPlayer.create(this, Settings.System.DEFAULT_ALARM_ALERT_URI)
-        timerAlertPlayer?.start()
+        if (timerAlertPlayer == null) {
+            timerAlertPlayer = MediaPlayer.create(this, Settings.System.DEFAULT_ALARM_ALERT_URI)
+            timerAlertPlayer?.start()
+        }
     }
 
     fun cancelTimer() {
@@ -208,6 +213,16 @@ class TimerService : Service() {
         isTimerPaused = false
 
         startTimer(timerMilliSecondsRemaining!!)
+    }
+
+    fun restartTimerValues() {
+        isTimerFinished = false
+
+        isTimerPaused = false
+
+        timerAlertPlayer?.release()
+
+        timerAlertPlayer = null
     }
 
     override fun onDestroy() {

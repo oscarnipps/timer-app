@@ -19,7 +19,6 @@ import com.app.timerz.data.Constants
 import com.app.timerz.data.TimerService
 import com.app.timerz.databinding.FragmentActiveTimerBinding
 import com.app.timerz.util.TimerUtil
-import kotlinx.android.synthetic.main.fragment_active_timer.*
 import timber.log.Timber
 
 class ActiveTimerFragment : Fragment(), ServiceConnection {
@@ -27,7 +26,8 @@ class ActiveTimerFragment : Fragment(), ServiceConnection {
     private lateinit var binding: FragmentActiveTimerBinding
     private val args: ActiveTimerFragmentArgs by navArgs()
     private var timerService: TimerService? = null
-    private var timerInitialValue: String? = null
+    //private var timerInitialValue: String? = null
+    private var timerDuration: String? = null
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -37,7 +37,9 @@ class ActiveTimerFragment : Fragment(), ServiceConnection {
         binding =
             DataBindingUtil.inflate(inflater, R.layout.fragment_active_timer, container, false)
 
-        Timber.d("timer duration : ${args.timerDuration}")
+        timerDuration = args.timerDuration
+
+        Timber.d("timer duration : $timerDuration")
 
         return binding.root
     }
@@ -53,7 +55,7 @@ class ActiveTimerFragment : Fragment(), ServiceConnection {
         val serviceIntent = Intent(requireActivity(), TimerService::class.java)
 
         serviceIntent.apply {
-            putExtra("timer-value", args.timerDuration)
+            putExtra("timer-value", timerDuration)
             putExtra("timer-title", args.timerTitle)
             action = Constants.ACTION_START_TIMER
         }
@@ -74,6 +76,8 @@ class ActiveTimerFragment : Fragment(), ServiceConnection {
     }
 
     private fun restartTimer() {
+        timerService?.restartTimerValues()
+
         startTimerService()
 
         binding.finishedTimerControlGroup.visibility = View.GONE
@@ -112,11 +116,11 @@ class ActiveTimerFragment : Fragment(), ServiceConnection {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        findNavController().previousBackStackEntry?.savedStateHandle?.getLiveData<String>("initial-time-duration")
+     /*   findNavController().previousBackStackEntry?.savedStateHandle?.getLiveData<String>("initial-time-duration")
             ?.observe(viewLifecycleOwner, { result ->
                 timerInitialValue = result
                 Timber.d("initial value from saved state : $result")
-            })
+            })*/
 
         binding.timerTitle.text = args.timerTitle
 
@@ -152,8 +156,13 @@ class ActiveTimerFragment : Fragment(), ServiceConnection {
 
             binding.timerValue.text = timerValue
 
-            if (timerValue == "00:00:00") {
-                binding.timerValue.text = args.timerDuration
+            if (timerValue == "00:00:00" || timerService?.isTimerFinished!!) {
+
+                Timber.d("timer elapsed")
+
+                binding.timerValue.text = timerService?.initialSetTimerValue
+
+                timerDuration = timerService?.initialSetTimerValue
 
                 binding.finishedTimerControlGroup.visibility = View.VISIBLE
 
