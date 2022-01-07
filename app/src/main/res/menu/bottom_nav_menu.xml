@@ -2,16 +2,16 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
     <item
         android:id="@+id/homeFragment"
-        android:icon="@drawable/ic_add"
-        android:title="home" />
+        android:icon="@drawable/ic_start_timer"
+        android:title="@string/start" />
 
     <item
         android:id="@+id/timerListFragment"
-        android:icon="@drawable/ic_add"
-        android:title="timers" />
+        android:icon="@drawable/ic_timers"
+        android:title="@string/timers" />
 
     <item
         android:id="@+id/settingsFragment"
-        android:icon="@drawable/ic_add"
-        android:title="settings" />
+        android:icon="@drawable/ic_settings"
+        android:title="@string/settings" />
 </menu>

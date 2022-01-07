@@ -3,6 +3,14 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools">
 
+    <data>
+
+        <variable
+            name="themeTypeValue"
+            type="String" />
+
+    </data>
+
     <androidx.coordinatorlayout.widget.CoordinatorLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent">
@@ -17,39 +25,17 @@
                 android:layout_height="wrap_content">
 
                 <TextView
-                    android:drawableStart="@drawable/ic_delete_all"
-                    android:drawablePadding="16dp"
-                    android:id="@+id/title_tag"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="24dp"
-                    android:layout_marginTop="32dp"
-                    android:layout_marginBottom="16dp"
-                    android:text="Settings"
-                    android:textAppearance="?attr/textAppearanceBody1"
+                    android:id="@+id/title"
+                    style="@style/Widget.Timerz.TextView"
+                    android:text="@string/settings"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent" />
 
-
-                <TextView
-                    android:id="@+id/logout"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginEnd="16dp"
-                    android:drawablePadding="4dp"
-                    android:gravity="center"
-                    android:textStyle="bold"
-                    android:text="Logout"
-                    android:textAppearance="?attr/textAppearanceBody1"
-                    app:layout_constraintBottom_toBottomOf="@+id/title_tag"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintTop_toTopOf="@+id/title_tag" />
-
             </androidx.constraintlayout.widget.ConstraintLayout>
 
             <com.google.android.material.card.MaterialCardView
-                style="?attr/cardViewStyle"
+                style="@style/Widget.Timerz.CardView"
                 android:id="@+id/theme_container"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content">
@@ -65,12 +51,12 @@
                         android:layout_marginStart="24dp"
                         android:layout_marginTop="16dp"
                         android:layout_marginBottom="16dp"
-                        tools:text="Light"
-                        android:text="Light"
-                        android:textAppearance="?textAppearanceCaption"
+                        android:text="@{themeTypeValue}"
+                        android:textAppearance="@style/TextAppearance.Timerz.Body2"
                         app:layout_constraintBottom_toBottomOf="parent"
                         app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toBottomOf="@+id/Theme" />
+                        app:layout_constraintTop_toBottomOf="@+id/Theme"
+                        tools:text="Light" />
 
                     <TextView
                         android:id="@+id/Theme"
@@ -78,9 +64,8 @@
                         android:layout_height="wrap_content"
                         android:layout_marginStart="24dp"
                         android:layout_marginTop="16dp"
-                        android:textStyle="bold"
-                        android:text="Theme"
-                        android:textAppearance="@style/TextAppearance.AppCompat.Medium"
+                        android:text="@string/theme"
+                        android:textAppearance="@style/TextAppearance.Timerz.Body1"
                         app:layout_constraintStart_toStartOf="parent"
                         app:layout_constraintTop_toTopOf="parent" />
 
@@ -89,7 +74,7 @@
             </com.google.android.material.card.MaterialCardView>
 
             <com.google.android.material.card.MaterialCardView
-                style="?attr/cardViewStyle"
+                style="@style/Widget.Timerz.CardView"
                 android:id="@+id/version_container"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content">
@@ -105,8 +90,8 @@
                         android:layout_marginStart="24dp"
                         android:layout_marginTop="16dp"
                         android:layout_marginBottom="16dp"
-                        android:text="1.0"
-                        android:textAppearance="?textAppearanceCaption"
+                        tools:text="@string/_1_0_0"
+                        android:textAppearance="@style/TextAppearance.Timerz.Body2"
                         app:layout_constraintBottom_toBottomOf="parent"
                         app:layout_constraintStart_toStartOf="parent"
                         app:layout_constraintTop_toBottomOf="@+id/version_tag" />
@@ -118,8 +103,8 @@
                         android:layout_marginStart="24dp"
                         android:layout_marginTop="16dp"
                         android:textStyle="bold"
-                        android:text="Version"
-                        android:textAppearance="@style/TextAppearance.AppCompat.Medium"
+                        android:text="@string/version"
+                        android:textAppearance="@style/TextAppearance.Timerz.Body1"
                         app:layout_constraintStart_toStartOf="parent"
                         app:layout_constraintTop_toTopOf="parent" />
 

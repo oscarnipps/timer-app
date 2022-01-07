@@ -73,12 +73,15 @@ class TimerListFragment : Fragment(), TimerListAdapter.TimerItemListener {
 
             if (!timerList.isEmpty()) {
                 binding.emptyState.visibility = View.GONE
+                binding.deleteTimers.visibility = View.VISIBLE
                 timerAdapter.submitList(timerList.toList())
                 timerAdapter.notifyDataSetChanged()
                 return@observe
             }
 
             binding.emptyState.visibility = View.VISIBLE
+            binding.deleteTimers.visibility = View.GONE
+
         })
 
         timerViewModel.databaseEvent().observe(viewLifecycleOwner, databaseEventObserver())

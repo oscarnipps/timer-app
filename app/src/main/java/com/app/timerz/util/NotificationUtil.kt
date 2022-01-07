@@ -44,14 +44,14 @@ object NotificationUtil {
 
         val notificationBuilder = NotificationCompat.Builder(context, "timer-notification-channel")
             .setContentTitle(title)
-            .setSmallIcon(R.drawable.ic_add)
+            .setSmallIcon(R.drawable.ic_timer_notification)
             .setContentText(getNotificationContentText(timeValue))
             .setOnlyAlertOnce(true)
             .setAutoCancel(true)
             .setOngoing(true)
             .setColorized(true)
             .setContentIntent(getContentPendingIntent(context, timeValue, title))
-            .setColor(ContextCompat.getColor(context, R.color.color_button_enabled))
+            .setColor(ContextCompat.getColor(context, R.color.brand_primary_light))
             .setPriority(NotificationCompat.PRIORITY_DEFAULT)
 
         setUpNotificationActions(notificationBuilder, context, timerState)
@@ -111,28 +111,6 @@ object NotificationUtil {
                 )
             }
         }
-
-       /* notificationBuilder.addAction(
-            R.drawable.ic_add,
-            context.getString(R.string.cancel),
-            getCancelPendingIntent(context)
-        )
-
-        if (timerState == Constants.TIMER_RESUMED_STATE) {
-            notificationBuilder.addAction(
-                R.drawable.ic_add,
-                context.getString(R.string.resume),
-                getResumePendingIntent(context)
-            )
-
-            return
-        }
-
-        notificationBuilder.addAction(
-            R.drawable.ic_add,
-            context.getString(R.string.pause),
-            getPausePendingIntent(context)
-        )*/
     }
 
     fun updateNotification(

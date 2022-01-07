@@ -59,7 +59,10 @@ class TimerListAdapter(
 
         fun bind(item: Timer) {
             binding.timerName.text = item.title
-            binding.timerValue.text = item.timerValue
+
+            val duration = "Duration : ${item.timerValue}"
+
+            binding.timerValue.text = duration
         }
 
     }

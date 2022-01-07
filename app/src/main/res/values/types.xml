@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <style name="TextAppearance.Timerz.Headline6" parent="TextAppearance.MaterialComponents.Headline6">
+        <item name="fontFamily">@font/prompt_medium</item>
+        <item name="android:textColor">?attr/colorOnSurface</item>
+    </style>
+
+    <style name="TextAppearance.Timerz.Headline5" parent="TextAppearance.MaterialComponents.Headline5">
+        <item name="android:textStyle">bold</item>
+        <item name="fontFamily">@font/prompt_regular</item>
+        <item name="android:textColor">?attr/colorOnSurface</item>
+    </style>
+
+    <style name="TextAppearance.Timerz.Body1" parent="TextAppearance.MaterialComponents.Body1">
+        <item name="fontFamily">@font/prompt_regular</item>
+        <item name="android:textColor">?attr/colorOnSurface</item>
+        <item name="android:textStyle">bold</item>
+    </style>
+
+    <style name="TextAppearance.Timerz.Body2" parent="TextAppearance.MaterialComponents.Body2">
+        <item name="fontFamily">@font/prompt_light</item>
+        <item name="android:textColor">?attr/colorOnSurface</item>
+    </style>
+
+    <style name="TextAppearance.Timerz.Subtitle1" parent="TextAppearance.MaterialComponents.Subtitle1">
+        <item name="fontFamily">@font/prompt_regular</item>
+        <item name="android:textColor">?attr/colorOnSurface</item>
+        <item name="android:textStyle">normal</item>
+    </style>
+
+    <style name="TextAppearance.Timerz.Subtitle2" parent="TextAppearance.MaterialComponents.Subtitle2">
+
+    </style>
+
+    <style name="TextAppearance.Timerz.Caption" parent="TextAppearance.MaterialComponents.Caption">
+
+    </style>
+
+    <style name="TextAppearance.Timerz.Overline" parent="TextAppearance.MaterialComponents.Overline">
+
+    </style>
+</resources>

@@ -1,5 +1,6 @@
 package com.app.timerz.ui.timerlist
 
+import android.app.Dialog
 import android.os.Bundle
 import android.provider.SyncStateContract.Helpers.update
 import android.view.LayoutInflater
@@ -16,6 +17,7 @@ import com.app.timerz.R
 import com.app.timerz.data.Resource
 import com.app.timerz.data.local.database.entity.Timer
 import com.app.timerz.databinding.FragmentAddTimerBinding
+import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import dagger.hilt.android.AndroidEntryPoint
 import timber.log.Timber
@@ -52,6 +54,11 @@ class AddTimerFragment : BottomSheetDialogFragment() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         getPickerValues()
+    }
+
+    override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
+
+        return BottomSheetDialog(requireContext(),R.style.ThemeOverlay_Timerz_BottomSheetDialog)
     }
 
     override fun onCreateView(

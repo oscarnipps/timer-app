@@ -1,16 +1,60 @@
 <resources xmlns:tools="http://schemas.android.com/tools">
-    <!-- Base application theme. -->
+
     <style name="Theme.Timerz" parent="Theme.MaterialComponents.Light.NoActionBar">
-        <!-- Primary brand color. -->
-        <item name="colorPrimary">@color/purple_500</item>
-        <item name="colorPrimaryVariant">@color/purple_700</item>
-        <item name="colorOnPrimary">@color/white</item>
-        <!-- Secondary brand color. -->
-        <item name="colorSecondary">@color/teal_200</item>
-        <item name="colorSecondaryVariant">@color/teal_700</item>
-        <item name="colorOnSecondary">@color/black</item>
-        <!-- Status bar color. -->
-        <item name="android:statusBarColor" tools:targetApi="l">?attr/colorPrimaryVariant</item>
-        <!-- Customize your theme here. -->
+        <item name="colorPrimary">@color/brand_primary_light</item>
+        <item name="colorPrimaryVariant">@color/brand_primary_light_variant</item>
+        <item name="colorSecondary">@color/brand_secondary_light</item>
+        <item name="colorSecondaryVariant">@color/brand_secondary_light_variant</item>
+        <item name="colorOnPrimary">@color/brand_on_primary_color_light</item>
+        <item name="colorOnSecondary">@color/brand_on_secondary_color_light</item>
+        <item name="colorError">@color/brand_error_color_light</item>
+        <item name="colorOnError">@color/brand_on_error_color_light</item>
+        <item name="colorSurface">@color/brand_light_surface</item>
+        <item name="colorOnSurface">@color/brand_on_light_surface</item>
+        <item name="android:colorBackground">@color/brand_light_background</item>
+        <item name="colorOnBackground">@color/brand_on_light_background</item>
+        <item name="android:statusBarColor" tools:ignore="NewApi">?attr/colorSurface</item>
+
+        <!--system -->
+        <item name="android:windowLightStatusBar" tools:ignore="NewApi">true</item>
+        <item name="android:navigationBarColor" tools:ignore="NewApi">?android:attr/colorBackground</item>
+        <item name="android:windowLightNavigationBar" tools:ignore="NewApi">true</item>
     </style>
+
+    
+    <!-- Base application theme. -->
+    <style name="Base.Theme.Timerz" parent="Theme.MaterialComponents.DayNight.NoActionBar">
+        <!--shape-->
+        <item name="shapeAppearanceSmallComponent">@style/ShapeAppearance.Timerz.MediumComponent</item>
+        <item name="shapeAppearanceMediumComponent">@style/ShapeAppearance.Timerz.MediumComponent</item>
+        <item name="shapeAppearanceLargeComponent">@style/ShapeAppearance.Timerz.LargeComponent</item>
+        
+        <!--typography-->
+        <item name="textAppearanceHeadline5">@style/TextAppearance.Timerz.Headline5</item>
+        <item name="textAppearanceHeadline6">@style/TextAppearance.Timerz.Headline6</item>
+        <item name="textAppearanceBody1">@style/TextAppearance.Timerz.Body1</item>
+        <item name="textAppearanceBody2">@style/TextAppearance.Timerz.Body2</item>
+        <item name="textAppearanceSubtitle1">@style/TextAppearance.Timerz.Subtitle1</item>
+        <item name="textAppearanceSubtitle2">@style/TextAppearance.Timerz.Subtitle2</item>
+        <item name="textAppearanceCaption">@style/TextAppearance.Timerz.Caption</item>
+        <item name="textAppearanceOverline">@style/TextAppearance.Timerz.Overline</item>
+        
+        <!--components styles i.e toolbarStyle ,cardViewStyle ,tabStyle e.t.c -->
+        <item name="cardViewStyle">@style/Widget.Timerz.CardView</item>
+        <item name="alertDialogStyle">@style/Widget.Timerz.Dialog</item>
+        <item name="bottomNavigationStyle">@style/Widget.Timerz.BottomNavigationView</item>
+        <item name="bottomSheetDialogTheme">@style/Widget.Timerz.BottomNavigationView</item>
+        <item name="android:textViewStyle">@style/Widget.Timerz.TextView</item>
+        <item name="buttonStyle">@style/Widget.Timerz.Button</item>
+
+        <!--system -->
+        <item name="android:windowLightStatusBar" tools:ignore="NewApi">true</item>
+        <item name="android:navigationBarColor" tools:ignore="NewApi">?android:attr/colorBackground</item>
+        <item name="android:windowLightNavigationBar" tools:ignore="NewApi">true</item>
+    </style>
+
+    <style name="ThemeOverlay.Timerz.BottomSheetDialog" parent="ThemeOverlay.MaterialComponents.BottomSheetDialog">
+        <item name="bottomSheetStyle">@style/Widget.Timerz.ModalBottomSheetDialog</item>
+    </style>
+
 </resources>
