@@ -6,7 +6,8 @@ Ideal for various timing scenarios ranging from time blocking activities to spor
 # Architecture  🏗
 This app uses MVVM (Model View View-Model) architecture with a single activity and multiple fragments
 
-[logo]: https://drive.google.com/file/d/1wE2yNOPKx4c8X8PCZx0m8jWfFi0UAVqn/view?usp=sharing "Logo Title Text 2"
+Inline-style: 
+![alt text](https://github.com/adam-p/markdown-here/raw/master/src/common/images/icon48.png "Logo Title Text 1")
 
 
 # Built With 🛠	
