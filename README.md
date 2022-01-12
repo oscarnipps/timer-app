@@ -6,28 +6,35 @@ Ideal for various timing scenarios ranging from time blocking activities to spor
 # Architecture  🏗
 This app uses MVVM (Model View View-Model) architecture with a single activity and multiple fragments
 
-Inline-style: 
-![alt text](https://github.com/adam-p/markdown-here/raw/master/src/common/images/icon48.png "Logo Title Text 1")
+![alt text](https://github.com/oscarnipps/timer-app/blob/d0def826b6ba603bbf12b07fd8c2a582d913c2de/architecture.png "Logo Title Text 1")
+
 
 
 # Built With 🛠	
 
-Kotlin
-RxJava 
-Android Architecture Components
-LiveData
-ViewModel
-Room Database.
-Jetpack Navigation Component (Including deep linking and static shortcuts)
-Material Components for Android (Including Dark Theme).
-Junit4
-Espresso (Automated UI tests)
-Dagger Hilt
-Services
-Notifications
+* Kotlin
+* RxJava 
+* Android Architecture Components
+* LiveData
+* ViewModel
+* Room Database.
+* Jetpack Navigation Component (Including deep linking and static shortcuts)
+* Material Components for Android (Including Dark Theme).
+* Junit4
+* Espresso (Automated UI tests)
+* Dagger Hilt
+* Services
+* Notifications
 
 
 # UI Screens🎨
+
+| Home          | Timer List            | Settings  | Started Timer  | Create Timer  | Cool  | Cool  | Cool  | Cool  |
+| ------------- |:-------------:        | -----:    | -----:         | -----:        | -----:| -----:| -----:| -----:|
+| col 3 is      | right-aligned         | $1600     | $1600          | $1600         | $1600 | $1600 | $1600 | $1600 |
+| col 2 is      | centered              |   $12     |   $12          |   $12         |   $12 |   $12 |   $12 |   $12 |
+| zebra stripes | are neat              |    $1     |    $1          |    $1         |    $1 |    $1 |    $1 |    $1 |
+
 
 
 # License 🔖
