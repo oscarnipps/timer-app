@@ -6,7 +6,7 @@ Ideal for various timing scenarios ranging from time blocking activities to spor
 # Architecture  🏗
 This app uses MVVM (Model View View-Model) architecture with a single activity and multiple fragments
 
-![alt text](https://github.com/oscarnipps/timer-app/blob/d0def826b6ba603bbf12b07fd8c2a582d913c2de/architecture.png "Logo Title Text 1")
+![alt text](https://github.com/oscarnipps/timer-app/blob/d0def826b6ba603bbf12b07fd8c2a582d913c2de/architecture.png "architecture")
 
 
 
@@ -23,17 +23,25 @@ This app uses MVVM (Model View View-Model) architecture with a single activity a
 * Junit4
 * Espresso (Automated UI tests)
 * Dagger Hilt
-* Services
+* Services (Foreground & Bound)
 * Notifications
 
 
-# UI Screens🎨
+# App Screens UI 🎨
 
-| Home          | Timer List            | Settings  | Started Timer  | Create Timer  | Cool  | Cool  | Cool  | Cool  |
-| ------------- |:-------------:        | -----:    | -----:         | -----:        | -----:| -----:| -----:| -----:|
-| col 3 is      | right-aligned         | $1600     | $1600          | $1600         | $1600 | $1600 | $1600 | $1600 |
-| col 2 is      | centered              |   $12     |   $12          |   $12         |   $12 |   $12 |   $12 |   $12 |
-| zebra stripes | are neat              |    $1     |    $1          |    $1         |    $1 |    $1 |    $1 |    $1 |
+### Light Theme 🌞
+|           |           |  |   |  |
+| ------------- |:-------------:        | -----:    | -----:         | -----:        |
+|  ![alt text](https://github.com/oscarnipps/timer-app/blob/58fa4a143516eeac149ff7cede184135ee4c4eb8/timers_start_active.png "")      |  ![alt text](https://github.com/oscarnipps/timer-app/blob/58fa4a143516eeac149ff7cede184135ee4c4eb8/timerz_list.png "")            |  ![alt text](https://github.com/oscarnipps/timer-app/blob/58fa4a143516eeac149ff7cede184135ee4c4eb8/timers_settings.png "")     |  ![alt text](https://github.com/oscarnipps/timer-app/blob/58fa4a143516eeac149ff7cede184135ee4c4eb8/timerz_active.png "")       |  ![alt text](https://github.com/oscarnipps/timer-app/blob/58fa4a143516eeac149ff7cede184135ee4c4eb8/timerz_create.png "")       |
+
+
+
+### Dark Theme 🌚
+|           |           |  |   |  |
+| ------------- |:-------------:        | -----:    | -----:         | -----:        |
+|  ![alt text](https://github.com/oscarnipps/timer-app/blob/58fa4a143516eeac149ff7cede184135ee4c4eb8/timerz_start_dark.png "")      |  ![alt text](https://github.com/oscarnipps/timer-app/blob/58fa4a143516eeac149ff7cede184135ee4c4eb8/timerz_list_dark.png "")            |  ![alt text](https://github.com/oscarnipps/timer-app/blob/58fa4a143516eeac149ff7cede184135ee4c4eb8/timerz_settings_dark.png "")     |  ![alt text](https://github.com/oscarnipps/timer-app/blob/58fa4a143516eeac149ff7cede184135ee4c4eb8/timerz_active_dark.png "")       |  ![alt text](https://github.com/oscarnipps/timer-app/blob/58fa4a143516eeac149ff7cede184135ee4c4eb8/timerz_create_dark.png "")       |
+
+
 
 
 
