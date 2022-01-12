@@ -28,7 +28,7 @@ class SettingsFragment : Fragment() {
     ): View {
         binding = DataBindingUtil.inflate(inflater, R.layout.fragment_settings, container, false)
 
-        binding.lifecycleOwner = this
+        binding.lifecycleOwner = viewLifecycleOwner
 
         binding.themeContainer.setOnClickListener { showThemeSelectionDialog() }
 

@@ -19,3 +19,6 @@
 # If you keep the line number information, uncomment this to
 # hide the original source file name.
 #-renamesourcefileattribute SourceFile
+
+#always keep network data classes from being obfuscated by proguard
+-keep class com.app.timerz.data.local.database.entity.*
