@@ -1,0 +1,26 @@
+name: Pull Requests Flow
+
+on: pull_request
+
+jobs:
+  first_job:
+
+    name: first pull request job
+
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v1
+
+      - name: Setup JDK
+        uses: actions/setup-java@v1
+        with:
+          java-version: 11
+
+
+      - name: Run tests
+        run: ./gradlew test
+
+      - name: Build Project
+        run: ./gradlew assemble
+

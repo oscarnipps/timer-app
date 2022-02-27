@@ -3,7 +3,6 @@ package com.app.timerz.ui.timerlist
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import com.app.timerz.data.local.repo.TimerRepo
 import com.app.timerz.ui.LiveDataTestUtil
-import com.google.common.truth.Truth.*
 import org.junit.Assert.*
 import org.junit.Before
 import org.junit.Rule
