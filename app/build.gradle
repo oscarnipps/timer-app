@@ -5,6 +5,9 @@ plugins {
     id 'dagger.hilt.android.plugin'
     id 'androidx.navigation.safeargs'
     id 'kotlin-android-extensions'
+    id 'com.google.gms.google-services'
+    id 'com.google.firebase.crashlytics'
+    id 'com.google.firebase.appdistribution'
 }
 
 android {
@@ -48,13 +51,16 @@ android {
 
 dependencies {
 
+    implementation 'com.google.firebase:firebase-crashlytics-ktx:18.2.8'
+    implementation 'com.google.firebase:firebase-analytics-ktx:20.1.0'
+    implementation 'com.google.firebase:firebase-messaging-ktx:23.0.0'
     def nav_version = "2.4.1"
     def fragment_version = "1.4.1"
     def rxandroid_version = '2.1.1'
     def rxjava_version = '2.2.9'
     def rxjava_adapter_version = '2.3.0'
     def archLifecycleVersion = "2.2.0"
-    def room_version = "2.4.1"
+    def room_version = "2.4.2"
 
     coreLibraryDesugaring 'com.android.tools:desugar_jdk_libs:1.1.5'
 
@@ -64,10 +70,6 @@ dependencies {
 
     // optional - RxJava2 support for Room
     implementation "androidx.room:room-rxjava2:$room_version"
-
-    //firebase crashlytics
-    implementation 'com.google.firebase:firebase-crashlytics:18.2.7'
-    implementation 'com.google.firebase:firebase-analytics:20.0.2'
 
     // optional - RxJava2 support for Room
     implementation "androidx.room:room-rxjava2:$room_version"
