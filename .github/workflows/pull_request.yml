@@ -32,7 +32,7 @@ jobs:
         if: ${{ always() }} # IMPORTANT: run Android Test Report regardless of outcome
 
 
- run_ui_test:
+  run_ui_test:
     name: Run Intstrumentation tests
 
     runs-on: macos-latest
