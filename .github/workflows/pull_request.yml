@@ -1,26 +1,74 @@
-name: Pull Requests Flow
+#workflow that would be run on every pull request from various feature branches to the staging or main branch
+name: Feature Branches Pull Request Workflow
 
-on: pull_request
+on:
+  pull_request:
+    branches:
+      - staging
+      - main
 
 jobs:
-  first_job:
 
-    name: first pull request job
+  # id of the job that holds the configuration data (think of it as a map id-configuration data)
+  run_unit_test:
+    #name of the job that would be shown in the github UI
+    name: Run Unit Tests
 
     runs-on: ubuntu-latest
 
     steps:
-      - uses: actions/checkout@v1
+      - name: Checkout Code
+        uses: actions/checkout@v1
 
       - name: Setup JDK
         uses: actions/setup-java@v1
         with:
           java-version: 11
 
+      - name: Run Unit Tests
+        run: ./gradlew testDebugUnitTest
 
-      - name: Run tests
-        run: ./gradlew test
+      - name: Android Test Report
+        uses: asadmansr/android-test-report-action@v1.2.0
+        if: ${{ always() }} # IMPORTANT: run Android Test Report regardless
 
-      - name: Build Project
-        run: ./gradlew assemble
+
+ run_ui_test:
+    name: Run Intstrumentation tests
+
+    runs-on: macos-latest
+
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v1
+
+      - name: Run Instrumentation / UI Tests
+        uses: reactivecircus/android-emulator-runner@v2
+        with:
+          api-level: 29
+          target: default
+          arch: x86
+          script: ./gradlew connectedCheck --stacktrace
+
+
+ upload_to_firebase_app_distribution:
+   name: Upload To Firebase App Distribution
+
+   runs-on: ubuntu-latest
+
+   steps:
+     - name: Make Gradlew Executeable
+       run: chmod +x ./gradlew
+
+     - name: Build Debug Version
+       run: ./gradlew assemble
+
+     - name: Upload artifact to Firebase App Distribution
+       uses: wzieba/Firebase-Distribution-Github-Action@v1
+       with:
+         appId: ${{secrets.FIREBASE_APP_ID}}
+         token: ${{secrets.FIREBASE_TOKEN}}
+         groups: qa-testers-group
+         file: app/build/outputs/apk/debug/app-debug.apk
+
 

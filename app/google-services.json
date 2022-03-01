@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "347360102356",
+    "project_id": "timer-mobile-app",
+    "storage_bucket": "timer-mobile-app.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:347360102356:android:ce1bb7d135926007def841",
+        "android_client_info": {
+          "package_name": "com.app.timerz"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "347360102356-pag90jauqtkd9c5icg50djvp647eqvtt.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBsDFCQIWxUTAVHt2wzK241LqInYbScHQU"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "347360102356-pag90jauqtkd9c5icg50djvp647eqvtt.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
