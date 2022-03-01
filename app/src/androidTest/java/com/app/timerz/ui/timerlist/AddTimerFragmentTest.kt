@@ -13,8 +13,7 @@ import androidx.test.espresso.action.GeneralLocation
 import androidx.test.espresso.action.GeneralSwipeAction
 import androidx.test.espresso.action.Press
 import androidx.test.espresso.action.Swipe
-import androidx.test.espresso.action.ViewActions.click
-import androidx.test.espresso.action.ViewActions.typeText
+import androidx.test.espresso.action.ViewActions.*
 import androidx.test.espresso.assertion.ViewAssertions.matches
 import androidx.test.espresso.matcher.ViewMatchers
 import androidx.test.espresso.matcher.ViewMatchers.*
@@ -87,6 +86,8 @@ class AddTimerFragmentTest {
                     if (viewLifecycleOwner != null) {
                         fragment.arguments = arguments
 
+
+
                         navController.setGraph(R.navigation.main_nav_graph)
 
                         navController.setCurrentDestination(R.id.addTimerFragment)
@@ -97,7 +98,10 @@ class AddTimerFragmentTest {
             }
         }
 
-        onView(withId(R.id.timer_title)).perform(typeText("cardio workout"))
+        onView(withId(R.id.timer_title)).perform(
+            typeText("cardio workout"),
+            closeSoftKeyboard()
+        )
 
         onView(withId(R.id.seconds_picker))
             .perform(

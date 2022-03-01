@@ -2,6 +2,7 @@ package com.app.timerz.ui.home
 
 import android.view.View
 import android.widget.NumberPicker
+import androidx.lifecycle.ViewModelStore
 import androidx.navigation.Navigation
 import androidx.navigation.testing.TestNavHostController
 import androidx.test.core.app.ApplicationProvider
@@ -80,6 +81,8 @@ class HomeFragmentTest {
     fun navigate_to_active_timer_fragment_when_start_timer_button_is_clicked() {
         val navController =
             TestNavHostController(ApplicationProvider.getApplicationContext())
+
+        navController.setViewModelStore(ViewModelStore())
 
         launchFragmentInHiltContainer {
             HomeFragment().also { fragment ->

@@ -59,6 +59,7 @@ jobs:
      - name: Make Gradlew Executeable
        run: chmod +x ./gradlew
 
+
      - name: Build Debug Version
        run: ./gradlew assemble
 
