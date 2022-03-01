@@ -50,7 +50,7 @@ jobs:
           script: ./gradlew connectedCheck --stacktrace
 
 
- upload_to_firebase_app_distribution:
+  upload_to_firebase_app_distribution:
    name: Upload To Firebase App Distribution
 
    runs-on: ubuntu-latest
