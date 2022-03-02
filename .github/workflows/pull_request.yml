@@ -41,8 +41,6 @@ jobs:
    runs-on: ubuntu-latest
 
    steps:
-     - name: Make Gradlew Executeable
-       run: chmod +x ./gradlew
 
 
      - name: Build Debug Version
