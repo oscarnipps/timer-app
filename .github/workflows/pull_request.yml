@@ -32,7 +32,22 @@ jobs:
         if: ${{ always() }} # IMPORTANT: run Android Test Report regardless of outcome
 
 
+  run_ui_test:
+    name: Run Intstrumentation tests
 
+    runs-on: macos-latest
+
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v1
+
+      - name: Run Instrumentation / UI Tests
+        uses: reactivecircus/android-emulator-runner@v2
+        with:
+          api-level: 29
+          target: default
+          arch: x86
+          script: ./gradlew connectedCheck --stacktrace
 
 
   upload_to_firebase_app_distribution:
