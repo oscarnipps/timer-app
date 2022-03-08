@@ -1,4 +1,3 @@
-#workflow that would be run on every pull request from various feature branches to the staging or main branch
 name: Feature Branches Pull Request Workflow
 
 on:
@@ -30,45 +29,21 @@ jobs:
 
       - name: Android Test Report
         uses: asadmansr/android-test-report-action@v1.2.0
-        if: ${{ always() }} # IMPORTANT: run Android Test Report regardless
+        if: ${{ always() }} # IMPORTANT: run Android Test Report regardless of outcome
 
+      - name: Make Gradlew Executeable
+        run: chmod +x ./gradlew
 
- run_ui_test:
-    name: Run Intstrumentation tests
+      - name: Build Debug Version
+        run: ./gradlew assemble
 
-    runs-on: macos-latest
-
-    steps:
-      - name: Checkout Code
-        uses: actions/checkout@v1
-
-      - name: Run Instrumentation / UI Tests
-        uses: reactivecircus/android-emulator-runner@v2
+      - name: Upload artifact to Firebase App Distribution
+        uses: wzieba/Firebase-Distribution-Github-Action@v1
         with:
-          api-level: 29
-          target: default
-          arch: x86
-          script: ./gradlew connectedCheck --stacktrace
+          appId: ${{secrets.FIREBASE_APP_ID}}
+          token: ${{secrets.FIREBASE_TOKEN}}
+          groups: qa-testers-group
+          file: app/build/outputs/apk/debug/app-debug.apk
 
-
- upload_to_firebase_app_distribution:
-   name: Upload To Firebase App Distribution
-
-   runs-on: ubuntu-latest
-
-   steps:
-     - name: Make Gradlew Executeable
-       run: chmod +x ./gradlew
-
-     - name: Build Debug Version
-       run: ./gradlew assemble
-
-     - name: Upload artifact to Firebase App Distribution
-       uses: wzieba/Firebase-Distribution-Github-Action@v1
-       with:
-         appId: ${{secrets.FIREBASE_APP_ID}}
-         token: ${{secrets.FIREBASE_TOKEN}}
-         groups: qa-testers-group
-         file: app/build/outputs/apk/debug/app-debug.apk
 
 

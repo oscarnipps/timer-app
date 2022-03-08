@@ -12,7 +12,7 @@
         <entry key="app/src/main/res/layout/fragment_add_timer.xml" value="0.335" />
         <entry key="app/src/main/res/layout/fragment_home.xml" value="0.25" />
         <entry key="app/src/main/res/layout/fragment_settings.xml" value="0.335" />
-        <entry key="app/src/main/res/layout/fragment_timer_list.xml" value="0.25" />
+        <entry key="app/src/main/res/layout/fragment_timer_list.xml" value="0.1" />
         <entry key="app/src/main/res/layout/theme_selection_dialog.xml" value="0.25416666666666665" />
         <entry key="app/src/main/res/layout/timer_list_item.xml" value="0.5" />
         <entry key="app/src/main/res/menu/bottom_nav_menu.xml" value="0.25364583333333335" />

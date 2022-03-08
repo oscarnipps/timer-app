@@ -7,7 +7,6 @@ plugins {
     id 'kotlin-android-extensions'
     id 'com.google.gms.google-services'
     id 'com.google.firebase.crashlytics'
-    id 'com.google.firebase.appdistribution'
 }
 
 android {
@@ -34,13 +33,12 @@ android {
     compileOptions {
         // Flag to enable support for the new language APIs
         coreLibraryDesugaringEnabled true
-        // Sets Java compatibility to Java 8
         sourceCompatibility JavaVersion.VERSION_11
         targetCompatibility JavaVersion.VERSION_11
     }
 
     kotlinOptions {
-        jvmTarget = 11
+        jvmTarget = '11'
     }
 
     buildFeatures {
@@ -53,7 +51,6 @@ dependencies {
 
     implementation 'com.google.firebase:firebase-crashlytics-ktx:18.2.8'
     implementation 'com.google.firebase:firebase-analytics-ktx:20.1.0'
-    implementation 'com.google.firebase:firebase-messaging-ktx:23.0.0'
     def nav_version = "2.4.1"
     def fragment_version = "1.4.1"
     def rxandroid_version = '2.1.1'
