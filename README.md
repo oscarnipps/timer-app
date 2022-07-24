@@ -32,14 +32,14 @@ This app uses MVVM (Model View View-Model) architecture with a single activity a
 ### Light Theme 🌞
 |           |           |  |   |  |
 | ------------- |:-------------:        | -----:    | -----:         | -----:        |
-|  ![alt text](https://github.com/oscarnipps/timer-app/blob/58fa4a143516eeac149ff7cede184135ee4c4eb8/timers_start_active.png "")      |  ![alt text](https://github.com/oscarnipps/timer-app/blob/58fa4a143516eeac149ff7cede184135ee4c4eb8/timerz_list.png "")            |  ![alt text](https://github.com/oscarnipps/timer-app/blob/58fa4a143516eeac149ff7cede184135ee4c4eb8/timers_settings.png "")     |  ![alt text](https://github.com/oscarnipps/timer-app/blob/58fa4a143516eeac149ff7cede184135ee4c4eb8/timerz_active.png "")       |  ![alt text](https://github.com/oscarnipps/timer-app/blob/58fa4a143516eeac149ff7cede184135ee4c4eb8/timerz_create.png "")       |
+|  ![alt text](https://github.com/oscarnipps/timer-app/blob/58fa4a143516eeac149ff7cede184135ee4c4eb8/timers_start_active.png "")      |  ![alt text](https://github.com/oscarnipps/timer-app/blob/58fa4a143516eeac149ff7cede184135ee4c4eb8/timerz_list.png "")            | ![alt text](https://github.com/oscarnipps/timer-app/blob/58fa4a143516eeac149ff7cede184135ee4c4eb8/timerz_active.png "")       |  ![alt text](https://github.com/oscarnipps/timer-app/blob/58fa4a143516eeac149ff7cede184135ee4c4eb8/timerz_create.png "")       |
 
 
 
 ### Dark Theme 🌚
 |           |           |  |   |  |
 | ------------- |:-------------:        | -----:    | -----:         | -----:        |
-|  ![alt text](https://github.com/oscarnipps/timer-app/blob/58fa4a143516eeac149ff7cede184135ee4c4eb8/timerz_start_dark.png "")      |  ![alt text](https://github.com/oscarnipps/timer-app/blob/58fa4a143516eeac149ff7cede184135ee4c4eb8/timerz_list_dark.png "")            |  ![alt text](https://github.com/oscarnipps/timer-app/blob/58fa4a143516eeac149ff7cede184135ee4c4eb8/timerz_settings_dark.png "")     |  ![alt text](https://github.com/oscarnipps/timer-app/blob/58fa4a143516eeac149ff7cede184135ee4c4eb8/timerz_active_dark.png "")       |  ![alt text](https://github.com/oscarnipps/timer-app/blob/58fa4a143516eeac149ff7cede184135ee4c4eb8/timerz_create_dark.png "")       |
+|  ![alt text](https://github.com/oscarnipps/timer-app/blob/58fa4a143516eeac149ff7cede184135ee4c4eb8/timerz_start_dark.png "")      |  ![alt text](https://github.com/oscarnipps/timer-app/blob/58fa4a143516eeac149ff7cede184135ee4c4eb8/timerz_list_dark.png "")            | ![alt text](https://github.com/oscarnipps/timer-app/blob/58fa4a143516eeac149ff7cede184135ee4c4eb8/timerz_active_dark.png "")       |  ![alt text](https://github.com/oscarnipps/timer-app/blob/58fa4a143516eeac149ff7cede184135ee4c4eb8/timerz_create_dark.png "")       |
 
 
 
